@@ -45,20 +45,46 @@
   color: var(--cream);
 }
 
+.navCtas {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
 .navSignIn {
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 1.5px;
   text-transform: uppercase;
-  color: var(--copper);
+  color: var(--navy);
+  background: var(--copper);
   border: 1px solid var(--copper);
-  padding: 8px 20px;
+  padding: 8px 16px;
   border-radius: 6px;
   transition: all 0.18s ease;
-  background: transparent;
+  white-space: nowrap;
 }
 
 .navSignIn:hover {
+  filter: brightness(1.12);
+  transform: translateY(-1px);
+}
+
+.navAdmin {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--copper);
+  background: transparent;
+  border: 1px solid var(--copper);
+  padding: 8px 16px;
+  border-radius: 6px;
+  transition: all 0.18s ease;
+  white-space: nowrap;
+}
+
+.navAdmin:hover {
   background: rgba(184, 115, 51, 0.08);
 }
 

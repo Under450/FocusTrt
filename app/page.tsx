@@ -29,9 +29,14 @@ export default function Home() {
             </Link>
           </li>
         </ul>
-        <Link href="/login" className={styles.navSignIn}>
-          Sign In
-        </Link>
+        <div className={styles.navCtas}>
+          <Link href="/login" className={styles.navSignIn}>
+            Member Sign In
+          </Link>
+          <Link href="/login" className={styles.navAdmin}>
+            Admin
+          </Link>
+        </div>
       </nav>
 
       {/* ─── Hero ─── */}
