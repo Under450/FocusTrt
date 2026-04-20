@@ -16,8 +16,12 @@ export async function middleware(request: NextRequest) {
 
   const path = request.nextUrl.pathname;
 
+  // Determine protection level
+  const isAdmin = path.startsWith("/admin");
+  const isDashboard = path.startsWith("/dashboard");
+  const isProtected = isAdmin || isDashboard;
+
   // Public routes — no auth needed
-  const isProtected = path.startsWith("/admin");
   if (!isProtected) {
     return response;
   }
@@ -47,7 +51,7 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Protect admin routes
+  // Both /admin and /dashboard require sign-in
   if (!user) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
@@ -55,7 +59,12 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  // Check admin status
+  // /dashboard only needs auth — no admin check
+  if (isDashboard) {
+    return response;
+  }
+
+  // /admin also requires admin whitelist
   const { data: adminRow } = await supabase
     .from("admins")
     .select("id")
