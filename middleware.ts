@@ -14,6 +14,14 @@ import { NextResponse, type NextRequest } from "next/server";
 export async function middleware(request: NextRequest) {
   let response = NextResponse.next({ request });
 
+  const path = request.nextUrl.pathname;
+
+  // Public routes — no auth needed
+  const isProtected = path.startsWith("/admin");
+  if (!isProtected) {
+    return response;
+  }
+
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -39,36 +47,25 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const path = request.nextUrl.pathname;
-
   // Protect admin routes
-  if (path.startsWith("/admin")) {
-    if (!user) {
-      const url = request.nextUrl.clone();
-      url.pathname = "/login";
-      url.searchParams.set("next", path);
-      return NextResponse.redirect(url);
-    }
-
-    // Check admin status
-    const { data: adminRow } = await supabase
-      .from("admins")
-      .select("id")
-      .eq("user_id", user.id)
-      .maybeSingle();
-
-    if (!adminRow) {
-      const url = request.nextUrl.clone();
-      url.pathname = "/";
-      url.searchParams.set("error", "not_admin");
-      return NextResponse.redirect(url);
-    }
+  if (!user) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/login";
+    url.searchParams.set("next", path);
+    return NextResponse.redirect(url);
   }
 
-  // Bounce already-authed users away from login page
-  if (path === "/login" && user) {
+  // Check admin status
+  const { data: adminRow } = await supabase
+    .from("admins")
+    .select("id")
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  if (!adminRow) {
     const url = request.nextUrl.clone();
-    url.pathname = "/admin";
+    url.pathname = "/";
+    url.searchParams.set("error", "not_admin");
     return NextResponse.redirect(url);
   }
 
