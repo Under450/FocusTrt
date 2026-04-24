@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { useState } from "react";
 import styles from "./landing.module.css";
 
@@ -30,18 +29,6 @@ export default function LandingPage() {
           <Link href="/trt/login" className={`${styles.enterBtn} ${styles.trtEnter}`}>
             ENTER →
           </Link>
-        </div>
-
-        {/* Centre logo — fades out on hover */}
-        <div className={`${styles.logoContainer} ${hover !== "none" ? styles.logoHidden : ""}`}>
-          <Image
-            src="/brand/logo-male-cream.png"
-            alt="ELEVATE brand mark"
-            width={180}
-            height={116}
-            className={styles.logoMark}
-            priority
-          />
         </div>
 
         <div
