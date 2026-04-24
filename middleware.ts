@@ -2,27 +2,40 @@ import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 /**
- * Middleware runs on every request.
- * Responsibilities:
- *   1. Refresh Supabase session cookie if expired
- *   2. Redirect unauthenticated users away from /admin to /login
- *   3. Redirect non-admin authenticated users away from /admin to /
+ * Middleware — route protection.
  *
- * Admin status is checked via the public.is_admin() DB function which
- * is called indirectly when we query the admins table.
+ * PUBLIC (no auth): /, /about, /podcasts, /clinics, /login, /auth/*
+ * MEMBER (signed-in): /dashboard, /inner-circle/*, /protocol, /labs,
+ *   /messages, /appointments, /pharmacy, /progress, /treatments/*
+ * ADMIN (signed-in + whitelist): /admin/*
  */
+
+const MEMBER_PREFIXES = [
+  "/dashboard",
+  "/inner-circle",
+  "/protocol",
+  "/labs",
+  "/messages",
+  "/appointments",
+  "/pharmacy",
+  "/progress",
+  "/treatments",
+];
+
+function isMemberRoute(path: string) {
+  return MEMBER_PREFIXES.some((p) => path === p || path.startsWith(p + "/"));
+}
+
 export async function middleware(request: NextRequest) {
   let response = NextResponse.next({ request });
 
   const path = request.nextUrl.pathname;
 
-  // Determine protection level
   const isAdmin = path.startsWith("/admin");
-  const isDashboard = path.startsWith("/dashboard");
-  const isProtected = isAdmin || isDashboard;
+  const isMember = isMemberRoute(path);
 
   // Public routes — no auth needed
-  if (!isProtected) {
+  if (!isAdmin && !isMember) {
     return response;
   }
 
@@ -51,7 +64,7 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Both /admin and /dashboard require sign-in
+  // All protected routes require sign-in
   if (!user) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
@@ -59,12 +72,12 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  // /dashboard only needs auth — no admin check
-  if (isDashboard) {
+  // Member routes — auth only, no admin check
+  if (isMember) {
     return response;
   }
 
-  // /admin also requires admin whitelist
+  // Admin routes — also require whitelist
   const { data: adminRow } = await supabase
     .from("admins")
     .select("id")
@@ -83,7 +96,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    // Run on everything except static files, images, and Next.js internals
     "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };

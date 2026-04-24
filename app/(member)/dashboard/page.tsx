@@ -1,3 +1,4 @@
+import Link from "next/link";
 import styles from "./dashboard.module.css";
 
 export default function DashboardPage() {
@@ -314,7 +315,7 @@ export default function DashboardPage() {
               Private forum · monthly clinician AMAs · quarterly retreats
             </div>
           </div>
-          <button className={styles.btnCopper}>ENTER →</button>
+          <Link href="/inner-circle" className={styles.btnCopper}>ENTER →</Link>
         </div>
       </main>
     </div>

@@ -1,0 +1,108 @@
+/* =====================================================================
+   INNER CIRCLE — landing page + placeholders
+   ===================================================================== */
+
+.hero {
+  padding: 48px 0 16px;
+}
+
+.eyebrow {
+  font-size: 10px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--copper);
+  margin-bottom: 10px;
+}
+
+.title {
+  font-family: var(--serif);
+  font-size: 32px;
+  font-weight: 600;
+  color: var(--cream);
+  margin-bottom: 8px;
+  line-height: 1.2;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.6;
+  max-width: 540px;
+}
+
+/* ---------- Card grid ---------- */
+.cardGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 36px;
+}
+
+@media (max-width: 900px) {
+  .cardGrid { grid-template-columns: 1fr; }
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.2s;
+}
+
+.card:hover {
+  border-color: rgba(189, 148, 104, 0.2);
+  transform: translateY(-2px);
+}
+
+.cardIcon {
+  font-size: 28px;
+  margin-bottom: 12px;
+}
+
+.cardTitle {
+  font-family: var(--serif);
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--cream);
+  margin-bottom: 8px;
+  line-height: 1.2;
+}
+
+.cardDesc {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.6;
+  margin-bottom: 16px;
+  flex: 1;
+}
+
+.cardCta {
+  display: inline-block;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--copper);
+  text-decoration: none;
+  transition: color 0.15s;
+  align-self: flex-start;
+}
+
+.cardCta:hover {
+  color: var(--tan);
+}
+
+/* ---------- Placeholder pages ---------- */
+.placeholder {
+  padding: 48px 0;
+}
+
+.placeholderBody {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.6;
+  max-width: 480px;
+  margin-top: 12px;
+}
