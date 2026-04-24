@@ -4,14 +4,17 @@ import { NextResponse, type NextRequest } from "next/server";
 /**
  * Middleware — route protection.
  *
- * PUBLIC (no auth): /, /about, /podcasts, /clinics, /login, /auth/*
- * MEMBER (signed-in): /dashboard, /inner-circle/*, /protocol, /labs,
- *   /messages, /appointments, /pharmacy, /progress, /treatments/*
+ * PUBLIC: /, /about, /podcasts, /clinics, /login, /trt/login, /hrt/login, /auth/*
+ * MEMBER (signed-in): /dashboard, /trt/dashboard, /hrt/dashboard,
+ *   /inner-circle/*, /protocol, /labs, /messages, /appointments,
+ *   /pharmacy, /progress, /treatments/*
  * ADMIN (signed-in + whitelist): /admin/*
  */
 
 const MEMBER_PREFIXES = [
   "/dashboard",
+  "/trt/dashboard",
+  "/hrt/dashboard",
   "/inner-circle",
   "/protocol",
   "/labs",

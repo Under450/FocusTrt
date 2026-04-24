@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "FocusTRT — Evidence-Based TRT Education",
+  title: "ELEVATE — TRT & HRT",
   description:
-    "Research-backed TRT podcasts, UK clinic directory, and members community. Evidence-based testosterone replacement therapy education for men.",
+    "Optimise · Restore · Rebalance. Evidence-based TRT and HRT programmes with clinician-led protocols.",
 };
 
 export default function RootLayout({

@@ -4,7 +4,7 @@
    to keep visual language consistent across the whole app
    ===================================================================== */
 
-@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Didact+Gothic&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:wght@400;500;600;700&family=Didact+Gothic&display=swap");
 
 :root {
   /* Core palette */
@@ -32,6 +32,7 @@
   /* Typography */
   --serif: "Cormorant Garamond", serif;
   --sans: "Didact Gothic", sans-serif;
+  --cinzel: "Cinzel", serif;
 }
 
 *,
