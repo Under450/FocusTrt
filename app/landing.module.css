@@ -64,7 +64,7 @@
   justify-content: center;
   text-decoration: none;
   cursor: pointer;
-  transition: flex 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: flex 0.5s ease-in-out;
   position: relative;
   overflow: hidden;
   padding: 48px 24px;
@@ -78,11 +78,11 @@
   background: #f5eadd;
 }
 
-/* Hover: expand hovered half */
-.split:has(.trtHalf:hover) .trtHalf { flex: 1.5; }
-.split:has(.trtHalf:hover) .hrtHalf { flex: 0.8; }
-.split:has(.hrtHalf:hover) .hrtHalf { flex: 1.5; }
-.split:has(.hrtHalf:hover) .trtHalf { flex: 0.8; }
+/* Hover: expand hovered half to 100%, collapse other to 0 */
+.split:has(.trtHalf:hover) .trtHalf { flex: 100; }
+.split:has(.trtHalf:hover) .hrtHalf { flex: 0.001; }
+.split:has(.hrtHalf:hover) .hrtHalf { flex: 100; }
+.split:has(.hrtHalf:hover) .trtHalf { flex: 0.001; }
 
 /* ---------- Content inside halves ---------- */
 .halfEyebrow {
@@ -128,13 +128,12 @@
 
 /* ---------- Centre logo ---------- */
 .logoContainer {
-  position: absolute;
+  position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 10;
   pointer-events: none;
-  margin-top: 28px; /* offset for nav height */
 }
 
 .logoMark {

@@ -24,7 +24,7 @@ export default function LandingPage() {
         {/* Centre logo bridging both halves */}
         <div className={styles.logoContainer}>
           <Image
-            src="/brand/logo-navy.png"
+            src="/brand/logo-male-cream.png"
             alt="ELEVATE brand mark"
             width={180}
             height={116}
