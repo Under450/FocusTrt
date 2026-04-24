@@ -1,8 +1,13 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
+import { useState } from "react";
 import styles from "./landing.module.css";
 
 export default function LandingPage() {
+  const [hover, setHover] = useState<"none" | "trt" | "hrt">("none");
+
   return (
     <div className={styles.page}>
       {/* ─── Top nav ─── */}
@@ -15,14 +20,20 @@ export default function LandingPage() {
 
       {/* ─── Split halves ─── */}
       <div className={styles.split}>
-        <Link href="/trt/login" className={`${styles.half} ${styles.trtHalf}`}>
+        <div
+          className={`${styles.half} ${styles.trtHalf} ${hover === "trt" ? styles.expanded : ""} ${hover === "hrt" ? styles.collapsed : ""}`}
+          onMouseEnter={() => setHover("trt")}
+          onMouseLeave={() => setHover("none")}
+        >
           <p className={`${styles.halfEyebrow} ${styles.trtEyebrow}`}>FOR MEN</p>
           <h1 className={`${styles.halfTitle} ${styles.trtTitle}`}>TRT</h1>
-          <p className={`${styles.halfCta} ${styles.trtCta}`}>ENTER →</p>
-        </Link>
+          <Link href="/trt/login" className={`${styles.enterBtn} ${styles.trtEnter}`}>
+            ENTER →
+          </Link>
+        </div>
 
-        {/* Centre logo bridging both halves */}
-        <div className={styles.logoContainer}>
+        {/* Centre logo — fades out on hover */}
+        <div className={`${styles.logoContainer} ${hover !== "none" ? styles.logoHidden : ""}`}>
           <Image
             src="/brand/logo-male-cream.png"
             alt="ELEVATE brand mark"
@@ -33,11 +44,17 @@ export default function LandingPage() {
           />
         </div>
 
-        <Link href="/hrt/login" className={`${styles.half} ${styles.hrtHalf}`}>
+        <div
+          className={`${styles.half} ${styles.hrtHalf} ${hover === "hrt" ? styles.expanded : ""} ${hover === "trt" ? styles.collapsed : ""}`}
+          onMouseEnter={() => setHover("hrt")}
+          onMouseLeave={() => setHover("none")}
+        >
           <p className={`${styles.halfEyebrow} ${styles.hrtEyebrow}`}>FOR WOMEN</p>
           <h1 className={`${styles.halfTitle} ${styles.hrtTitle}`}>HRT</h1>
-          <p className={`${styles.halfCta} ${styles.hrtCta}`}>← ENTER</p>
-        </Link>
+          <Link href="/hrt/login" className={`${styles.enterBtn} ${styles.hrtEnter}`}>
+            ← ENTER
+          </Link>
+        </div>
       </div>
 
       {/* ─── Bottom strip ─── */}
