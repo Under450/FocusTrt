@@ -37,8 +37,8 @@ export default function LandingPage() {
         <Image
           src="/brand/logo-navy.png"
           alt="ELEVATE brand mark"
-          width={878}
-          height={565}
+          width={967}
+          height={1036}
           className={styles.heroLogo}
           priority
         />

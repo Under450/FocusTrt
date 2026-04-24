@@ -68,8 +68,8 @@
 }
 
 .heroLogo {
-  width: clamp(140px, 22vw, 260px);
-  height: auto;
+  width: auto;
+  height: clamp(200px, 36vh, 360px);
   opacity: 0;
   transform: scale(0.95);
   animation: logoReveal 1s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
@@ -313,7 +313,8 @@
   }
 
   .heroLogo {
-    width: 160px;
+    width: auto;
+    height: 200px;
   }
 
   .heroWordmark {
