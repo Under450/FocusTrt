@@ -17,8 +17,8 @@ export default function LandingPage() {
       return;
     }
 
-    // Scene 1 holds for ~4s, then dissolves into Scene 2
-    const timer = setTimeout(() => setScene(2), 4000);
+    // Scene 1 holds for ~6s, then dissolves into Scene 2
+    const timer = setTimeout(() => setScene(2), 6000);
     return () => clearTimeout(timer);
   }, []);
 
