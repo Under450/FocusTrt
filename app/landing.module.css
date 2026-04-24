@@ -1,58 +1,135 @@
 /* =====================================================================
-   ELEVATE — Split-screen landing page
+   ELEVATE — Cinematic two-scene landing
    ===================================================================== */
 
 .page {
-  display: flex;
-  flex-direction: column;
+  position: relative;
   min-height: 100vh;
   overflow: hidden;
   background: #0a1930;
 }
 
-/* ---------- Top nav ---------- */
+/* ---------- Persistent top nav ---------- */
 .topNav {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  z-index: 20;
+  z-index: 50;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 clamp(20px, 4vw, 48px);
-  height: 56px;
+  padding: 0 clamp(24px, 4vw, 56px);
+  height: 60px;
 }
 
 .navWordmark {
   font-family: var(--cinzel);
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 500;
-  letter-spacing: 4px;
+  letter-spacing: 5px;
   color: #f5eadd;
-  text-decoration: none;
 }
 
 .navAdmin {
   font-family: var(--sans);
-  font-size: 11px;
-  letter-spacing: 2px;
+  font-size: 10px;
+  letter-spacing: 2.5px;
   text-transform: uppercase;
   color: #c9a961;
   text-decoration: none;
-  transition: color 0.15s;
+  transition: color 0.2s ease;
 }
 
 .navAdmin:hover {
   color: #f5eadd;
 }
 
+/* =======================================================================
+   SCENE 1 — Hero arrival
+   ======================================================================= */
+
+.scene1 {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #0a1930;
+  opacity: 1;
+  transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+}
+
+.scene1Hidden {
+  opacity: 0;
+}
+
+.heroLogo {
+  width: clamp(140px, 22vw, 260px);
+  height: auto;
+  opacity: 0;
+  transform: scale(0.95);
+  animation: logoReveal 1s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
+  filter: drop-shadow(0 8px 40px rgba(0, 0, 0, 0.4));
+}
+
+@keyframes logoReveal {
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.heroWordmark {
+  font-family: var(--cinzel);
+  font-size: clamp(32px, 5vw, 56px);
+  font-weight: 500;
+  letter-spacing: 10px;
+  color: #f5eadd;
+  margin-top: 28px;
+  opacity: 0;
+  transform: translateY(8px);
+  animation: textReveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) 1.0s forwards;
+}
+
+.heroTagline {
+  font-family: var(--cinzel);
+  font-size: clamp(10px, 1.2vw, 13px);
+  font-weight: 400;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  color: #c9a961;
+  margin-top: 14px;
+  opacity: 0;
+  transform: translateY(8px);
+  animation: textReveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) 1.6s forwards;
+}
+
+@keyframes textReveal {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* =======================================================================
+   SCENE 2 — Split-screen chooser
+   ======================================================================= */
+
+.scene2 {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
 /* ---------- Split container ---------- */
 .split {
   flex: 1;
   display: flex;
-  position: relative;
-  padding-top: 56px;
+  padding-top: 60px;
 }
 
 /* ---------- Halves ---------- */
@@ -62,28 +139,30 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  text-decoration: none;
   cursor: default;
-  transition: flex 0.5s ease-in-out;
+  transition: flex 0.6s cubic-bezier(0.65, 0, 0.35, 1);
   position: relative;
   overflow: hidden;
   padding: 48px 24px;
+  min-width: 0;
 }
 
 .trtHalf { background: #0a1930; }
 .hrtHalf { background: #f5eadd; }
 
 /* State-driven expansion */
-.expanded { flex: 100; }
+.expanded { flex: 200; }
 .collapsed { flex: 0.001; }
 
-/* ---------- Content inside halves ---------- */
+/* ---------- Half content ---------- */
 .halfEyebrow {
   font-family: var(--sans);
   font-size: 10px;
-  letter-spacing: 2px;
+  letter-spacing: 3px;
   text-transform: uppercase;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
+  white-space: nowrap;
+  transition: opacity 0.4s ease;
 }
 
 .trtEyebrow { color: #c9a961; }
@@ -91,108 +170,125 @@
 
 .halfTitle {
   font-family: var(--cinzel);
-  font-size: clamp(64px, 12vw, 120px);
+  font-size: clamp(72px, 14vw, 140px);
   font-weight: 500;
-  letter-spacing: 8px;
+  letter-spacing: 6px;
   line-height: 1;
-  margin-bottom: 24px;
-  transition: transform 0.4s ease;
+  margin-bottom: 28px;
+  white-space: nowrap;
+  transition: transform 0.6s cubic-bezier(0.65, 0, 0.35, 1);
+  will-change: transform;
 }
 
 .expanded .halfTitle {
-  transform: scale(1.05);
+  transform: scale(1.08);
 }
 
 .trtTitle { color: #f5eadd; }
-.hrtTitle { color: #f5eadd; }
+.hrtTitle { color: #0a1930; }
 
 /* ---------- ENTER button ---------- */
 .enterBtn {
   font-family: var(--cinzel);
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
-  letter-spacing: 4px;
+  letter-spacing: 5px;
   text-transform: uppercase;
   text-decoration: none;
   cursor: pointer;
-  padding: 12px 28px;
-  border: 1px solid transparent;
-  border-radius: 4px;
-  transition: all 0.25s ease;
+  padding: 14px 32px;
   position: relative;
+  white-space: nowrap;
+  transition:
+    transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+    color 0.2s ease;
+}
+
+.enterBtn::after {
+  content: "";
+  position: absolute;
+  bottom: 10px;
+  left: 32px;
+  right: 32px;
+  height: 1px;
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform 0.3s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.enterBtn:hover::after {
+  transform: scaleX(1);
+}
+
+.enterBtn:hover {
+  transform: scale(1.06);
 }
 
 .trtEnter {
   color: #c9a961;
-  border-color: rgba(201, 169, 97, 0.3);
+}
+
+.trtEnter::after {
+  background: #c9a961;
 }
 
 .trtEnter:hover {
-  border-color: #c9a961;
-  transform: scale(1.05);
-  text-decoration: underline;
-  text-underline-offset: 4px;
+  color: #dfc07a;
 }
 
 .hrtEnter {
   color: #8a6b2e;
-  border-color: rgba(138, 107, 46, 0.3);
+}
+
+.hrtEnter::after {
+  background: #8a6b2e;
 }
 
 .hrtEnter:hover {
-  border-color: #8a6b2e;
-  transform: scale(1.05);
-  text-decoration: underline;
-  text-underline-offset: 4px;
-}
-
-/* ---------- Centre logo ---------- */
-.logoContainer {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 10;
-  pointer-events: none;
-  opacity: 1;
-  transition: opacity 0.3s ease-in-out;
-}
-
-.logoHidden {
-  opacity: 0;
-}
-
-.logoMark {
-  width: clamp(100px, 14vw, 180px);
-  height: auto;
-  filter: drop-shadow(0 4px 24px rgba(0, 0, 0, 0.3));
+  color: #6b5222;
 }
 
 /* ---------- Bottom strip ---------- */
 .bottomStrip {
   background: #0a1930;
-  border-top: 1px solid rgba(201, 169, 97, 0.15);
-  padding: 32px 24px;
+  border-top: 1px solid rgba(201, 169, 97, 0.1);
+  padding: 28px 24px;
   text-align: center;
   flex-shrink: 0;
 }
 
 .bottomWordmark {
   font-family: var(--cinzel);
-  font-size: clamp(28px, 4vw, 42px);
+  font-size: clamp(24px, 3.5vw, 36px);
   font-weight: 500;
-  letter-spacing: 6px;
+  letter-spacing: 8px;
   color: #f5eadd;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .bottomTagline {
   font-family: var(--cinzel);
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 400;
-  letter-spacing: 4px;
+  letter-spacing: 5px;
   text-transform: uppercase;
   color: #c9a961;
+}
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .scene1 { display: none; }
+  .heroLogo,
+  .heroWordmark,
+  .heroTagline {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+  .half { transition: none; }
+  .halfTitle { transition: none; }
+  .enterBtn { transition: none; }
+  .enterBtn::after { transition: none; }
 }
 
 /* ---------- Mobile ---------- */
@@ -207,14 +303,20 @@
   }
 
   .halfTitle {
-    font-size: 72px;
+    font-size: 64px;
+    letter-spacing: 4px;
   }
 
   .expanded .halfTitle {
     transform: none;
   }
 
-  .logoContainer {
-    display: none;
+  .heroLogo {
+    width: 160px;
+  }
+
+  .heroWordmark {
+    font-size: 28px;
+    letter-spacing: 6px;
   }
 }
