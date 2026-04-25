@@ -1,28 +1,11 @@
-import Link from "next/link";
 import dashStyles from "../../dashboard/dashboard.module.css";
 import styles from "../inner-circle.module.css";
+import MemberSidebar from "../../_components/MemberSidebar";
 
 export default function AmasPage() {
   return (
     <div className={dashStyles.app}>
-      <aside className={dashStyles.sidebar}>
-        <div className={dashStyles.sbBrand}>
-          <div className={dashStyles.sbLogo}>FOCUSTRT</div>
-          <div className={dashStyles.sbTag}>MEN&apos;S OPTIMISATION</div>
-        </div>
-        <nav className={dashStyles.sbNav}>
-          <Link href="/dashboard" className={dashStyles.sbItem}>DASHBOARD</Link>
-          <div className={dashStyles.sbSection}>Inner Circle</div>
-          <Link href="/inner-circle" className={dashStyles.sbItem}>THE INNER CIRCLE</Link>
-        </nav>
-        <div className={dashStyles.sbUser}>
-          <div className={dashStyles.sbAvatar}>CJ</div>
-          <div>
-            <div className={dashStyles.sbName}>Craig J.</div>
-            <div className={dashStyles.sbTier}>Platinum member</div>
-          </div>
-        </div>
-      </aside>
+      <MemberSidebar active="inner-circle" />
       <main className={dashStyles.main}>
         <div className={styles.placeholder}>
           <p className={styles.eyebrow}>COMING SOON</p>

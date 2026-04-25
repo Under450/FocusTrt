@@ -1,42 +1,12 @@
 import Link from "next/link";
 import dashStyles from "../dashboard/dashboard.module.css";
 import styles from "./inner-circle.module.css";
+import MemberSidebar from "../_components/MemberSidebar";
 
 export default function InnerCirclePage() {
   return (
     <div className={dashStyles.app}>
-      {/* ─── Sidebar ─── */}
-      <aside className={dashStyles.sidebar}>
-        <div className={dashStyles.sbBrand}>
-          <div className={dashStyles.sbLogo}>FOCUSTRT</div>
-          <div className={dashStyles.sbTag}>MEN&apos;S OPTIMISATION</div>
-        </div>
-        <nav className={dashStyles.sbNav}>
-          <Link href="/dashboard" className={dashStyles.sbItem}>DASHBOARD</Link>
-          <button className={dashStyles.sbItem}>MY PROTOCOL</button>
-          <button className={dashStyles.sbItem}>LABS &amp; BIOMARKERS</button>
-          <button className={dashStyles.sbItem}>MESSAGES</button>
-          <button className={dashStyles.sbItem}>APPOINTMENTS</button>
-          <button className={dashStyles.sbItem}>PHARMACY</button>
-          <button className={dashStyles.sbItem}>PROGRESS</button>
-          <div className={dashStyles.sbSection}>Inner Circle</div>
-          <Link href="/inner-circle" className={dashStyles.sbItemActive}>THE INNER CIRCLE</Link>
-          <div className={dashStyles.sbSection}>Treatments</div>
-          <button className={dashStyles.sbTreat}>Testosterone</button>
-          <button className={dashStyles.sbTreat}>Weight loss</button>
-          <button className={dashStyles.sbTreat}>Sexual health</button>
-          <button className={dashStyles.sbTreat}>Peptides</button>
-          <button className={dashStyles.sbTreat}>Longevity</button>
-          <button className={dashStyles.sbTreat}>Hair &amp; skin</button>
-        </nav>
-        <div className={dashStyles.sbUser}>
-          <div className={dashStyles.sbAvatar}>CJ</div>
-          <div>
-            <div className={dashStyles.sbName}>Craig J.</div>
-            <div className={dashStyles.sbTier}>Platinum member</div>
-          </div>
-        </div>
-      </aside>
+      <MemberSidebar active="inner-circle" />
 
       {/* ─── Main ─── */}
       <main className={dashStyles.main}>

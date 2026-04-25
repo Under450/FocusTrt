@@ -1,39 +1,11 @@
 import Link from "next/link";
 import styles from "../dashboard/dashboard.module.css";
+import MemberSidebar from "./MemberSidebar";
 
 export default function MemberDashboard() {
   return (
     <div className={styles.app}>
-      {/* ─── Sidebar ─── */}
-      <aside className={styles.sidebar}>
-        <div className={styles.sbBrand}>
-          <div className={styles.sbLogo}>FOCUSTRT</div>
-          <div className={styles.sbTag}>MEN&apos;S OPTIMISATION</div>
-        </div>
-        <nav className={styles.sbNav}>
-          <button className={styles.sbItemActive}>DASHBOARD</button>
-          <button className={styles.sbItem}>MY PROTOCOL</button>
-          <button className={styles.sbItem}>LABS &amp; BIOMARKERS</button>
-          <button className={styles.sbItem}>MESSAGES</button>
-          <button className={styles.sbItem}>APPOINTMENTS</button>
-          <button className={styles.sbItem}>PHARMACY</button>
-          <button className={styles.sbItem}>PROGRESS</button>
-          <div className={styles.sbSection}>Treatments</div>
-          <button className={styles.sbTreat}>Testosterone</button>
-          <button className={styles.sbTreat}>Weight loss</button>
-          <button className={styles.sbTreat}>Sexual health</button>
-          <button className={styles.sbTreat}>Peptides</button>
-          <button className={styles.sbTreat}>Longevity</button>
-          <button className={styles.sbTreat}>Hair &amp; skin</button>
-        </nav>
-        <div className={styles.sbUser}>
-          <div className={styles.sbAvatar}>CJ</div>
-          <div>
-            <div className={styles.sbName}>Craig J.</div>
-            <div className={styles.sbTier}>Platinum member</div>
-          </div>
-        </div>
-      </aside>
+      <MemberSidebar active="dashboard" />
 
       {/* ─── Main content ─── */}
       <main className={styles.main}>
