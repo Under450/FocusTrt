@@ -106,16 +106,8 @@ export default function AssessmentPage() {
   function next() {
     if (!card) return;
 
-    // Loading card: generate report after delay
-    if (card.type === "loading") {
-      setTimeout(() => {
-        setFindings(generateFindings(answers));
-        setTests(recommendTests(answers));
-        setPhase("transition");
-      }, 3000);
-      setCardIdx(cardIdx + 1); // won't render, phase changes
-      return;
-    }
+    // Loading card — useEffect handles the API call + transition
+    if (card.type === "loading") return;
 
     if (cardIdx < totalCards - 1) {
       setCardIdx(cardIdx + 1);
@@ -141,15 +133,56 @@ export default function AssessmentPage() {
     else if (phase === "tests") setPhase("decision");
   }
 
-  // Auto-advance on loading card
+  // Auto-advance on loading card — fetch AI report with minimum 3s display
   useEffect(() => {
     if (card?.type === "loading" && phase === "quiz") {
-      const timer = setTimeout(() => {
-        setFindings(generateFindings(answers));
-        setTests(recommendTests(answers));
-        setPhase("transition");
-      }, 3000);
-      return () => clearTimeout(timer);
+      let cancelled = false;
+      const start = Date.now();
+
+      const fetchReport = async () => {
+        let data: { findings: Finding[]; tests: TestRec[] } | null = null;
+
+        try {
+          const controller = new AbortController();
+          const timeout = setTimeout(() => controller.abort(), 15000);
+
+          const res = await fetch("/api/generate-report", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(answers),
+            signal: controller.signal,
+          });
+          clearTimeout(timeout);
+
+          if (res.ok) {
+            data = await res.json();
+          }
+        } catch {
+          // Network error or timeout — fall through to local fallback
+        }
+
+        // Fallback to local logic
+        if (!data || !data.findings?.length || !data.tests?.length) {
+          data = {
+            findings: generateFindings(answers),
+            tests: recommendTests(answers),
+          };
+        }
+
+        // Ensure minimum 3s loading display
+        const elapsed = Date.now() - start;
+        const remaining = Math.max(0, 3000 - elapsed);
+
+        setTimeout(() => {
+          if (cancelled) return;
+          setFindings(data!.findings);
+          setTests(data!.tests);
+          setPhase("transition");
+        }, remaining);
+      };
+
+      fetchReport();
+      return () => { cancelled = true; };
     }
   }, [card, phase, answers]);
 
