@@ -1,0 +1,681 @@
+/* =====================================================================
+   ELEVATE Assessment Quiz
+   ===================================================================== */
+
+/* ---------- Shell ---------- */
+.shell {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  transition: background 0.5s ease;
+}
+
+.shellTrt { background: #1c2c47; }
+.shellHrt { background: #f4ede2; }
+
+/* ---------- Card frame ---------- */
+.card {
+  width: 100%;
+  max-width: 580px;
+  border-radius: 14px;
+  overflow: hidden;
+  transition: border-color 0.3s ease;
+}
+
+.cardTrt {
+  border: 1px solid rgba(244, 237, 226, 0.12);
+  background: rgba(244, 237, 226, 0.04);
+}
+
+.cardHrt {
+  border: 1px solid rgba(28, 44, 71, 0.12);
+  background: rgba(28, 44, 71, 0.04);
+}
+
+/* Gold/navy stripe at top */
+.stripe {
+  height: 6px;
+}
+
+.stripeTrt { background: #c9a961; }
+.stripeHrt { background: #1c2c47; }
+
+.cardInner {
+  padding: 36px 32px 28px;
+}
+
+/* ---------- Progress bar ---------- */
+.progressWrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 28px;
+}
+
+.progressBar {
+  flex: 1;
+  height: 3px;
+  border-radius: 2px;
+  overflow: hidden;
+  margin-right: 14px;
+}
+
+.progressBarTrt { background: rgba(201, 169, 97, 0.15); }
+.progressBarHrt { background: rgba(28, 44, 71, 0.15); }
+
+.progressFill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.progressFillTrt { background: #c9a961; }
+.progressFillHrt { background: #1c2c47; }
+
+.stepCount {
+  font-family: var(--sans);
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.stepCountTrt { color: #c9a961; }
+.stepCountHrt { color: #1c2c47; }
+
+/* ---------- Typography ---------- */
+.eyebrow {
+  font-family: var(--sans);
+  font-size: 10px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+
+.eyebrowTrt { color: #c9a961; }
+.eyebrowHrt { color: #1c2c47; }
+
+.title {
+  font-family: var(--cinzel);
+  font-size: 28px;
+  font-weight: 500;
+  line-height: 1.2;
+  margin-bottom: 12px;
+  white-space: pre-line;
+}
+
+.titleTrt { color: #f4ede2; }
+.titleHrt { color: #1c2c47; }
+
+.body {
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.65;
+  margin-bottom: 24px;
+}
+
+.bodyTrt { color: rgba(244, 237, 226, 0.6); }
+.bodyHrt { color: rgba(28, 44, 71, 0.6); }
+
+/* ---------- Option tiles ---------- */
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.option {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 14px 18px;
+  border-radius: 8px;
+  font-family: var(--sans);
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid;
+  background: transparent;
+}
+
+.optionTrt {
+  color: #f4ede2;
+  border-color: rgba(244, 237, 226, 0.12);
+}
+
+.optionTrt:hover {
+  border-color: rgba(201, 169, 97, 0.4);
+  background: rgba(201, 169, 97, 0.06);
+}
+
+.optionTrtSelected {
+  border-color: #c9a961;
+  background: rgba(201, 169, 97, 0.12);
+  color: #c9a961;
+}
+
+.optionHrt {
+  color: #1c2c47;
+  border-color: rgba(28, 44, 71, 0.12);
+}
+
+.optionHrt:hover {
+  border-color: rgba(28, 44, 71, 0.4);
+  background: rgba(28, 44, 71, 0.06);
+}
+
+.optionHrtSelected {
+  border-color: #1c2c47;
+  background: rgba(28, 44, 71, 0.1);
+}
+
+/* ---------- Buttons ---------- */
+.btnRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.btnPrimary {
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  padding: 14px 36px;
+  border-radius: 6px;
+  border: 2px solid;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  text-decoration: none;
+}
+
+.btnPrimary:active { transform: translateY(1px); }
+
+.btnPrimaryTrt {
+  color: #c9a961;
+  border-color: #c9a961;
+}
+
+.btnPrimaryTrt:hover {
+  background: #c9a961;
+  color: #1c2c47;
+}
+
+.btnPrimaryTrt:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.btnPrimaryTrt:disabled:hover {
+  background: transparent;
+  color: #c9a961;
+}
+
+.btnPrimaryHrt {
+  color: #1c2c47;
+  border-color: #1c2c47;
+}
+
+.btnPrimaryHrt:hover {
+  background: #1c2c47;
+  color: #f4ede2;
+}
+
+.btnPrimaryHrt:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.btnPrimaryHrt:disabled:hover {
+  background: transparent;
+  color: #1c2c47;
+}
+
+.btnSecondary {
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 1.3px;
+  text-transform: uppercase;
+  padding: 12px 24px;
+  border-radius: 6px;
+  border: 1px solid;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.btnSecondary:active { transform: translateY(1px); }
+
+.btnSecondaryTrt {
+  color: rgba(244, 237, 226, 0.5);
+  border-color: rgba(244, 237, 226, 0.15);
+}
+
+.btnSecondaryTrt:hover {
+  color: #f4ede2;
+  border-color: rgba(244, 237, 226, 0.3);
+}
+
+.btnSecondaryHrt {
+  color: rgba(28, 44, 71, 0.5);
+  border-color: rgba(28, 44, 71, 0.15);
+}
+
+.btnSecondaryHrt:hover {
+  color: #1c2c47;
+  border-color: rgba(28, 44, 71, 0.3);
+}
+
+/* ---------- Combined inputs (Card 8) ---------- */
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.inputLabel {
+  font-family: var(--sans);
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.inputLabelTrt { color: rgba(244, 237, 226, 0.5); }
+.inputLabelHrt { color: rgba(28, 44, 71, 0.5); }
+
+.inputField {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 8px;
+  font-family: var(--sans);
+  font-size: 14px;
+  border: 1px solid;
+  background: transparent;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.inputFieldTrt {
+  color: #f4ede2;
+  border-color: rgba(244, 237, 226, 0.12);
+}
+
+.inputFieldTrt:focus { border-color: #c9a961; }
+
+.inputFieldHrt {
+  color: #1c2c47;
+  border-color: rgba(28, 44, 71, 0.12);
+}
+
+.inputFieldHrt:focus { border-color: #1c2c47; }
+
+/* ---------- Segmented controls (Card 10) ---------- */
+.segGroup {
+  margin-bottom: 20px;
+}
+
+.segLabel {
+  font-family: var(--sans);
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.segLabelTrt { color: rgba(244, 237, 226, 0.5); }
+.segLabelHrt { color: rgba(28, 44, 71, 0.5); }
+
+.segRow {
+  display: flex;
+  gap: 0;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid;
+}
+
+.segRowTrt { border-color: rgba(244, 237, 226, 0.12); }
+.segRowHrt { border-color: rgba(28, 44, 71, 0.12); }
+
+.segBtn {
+  flex: 1;
+  padding: 10px 4px;
+  font-family: var(--sans);
+  font-size: 11px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  background: transparent;
+  border-right: 1px solid;
+}
+
+.segBtn:last-child { border-right: none; }
+
+.segBtnTrt {
+  color: rgba(244, 237, 226, 0.5);
+  border-right-color: rgba(244, 237, 226, 0.12);
+}
+
+.segBtnTrtActive {
+  background: #c9a961;
+  color: #1c2c47;
+}
+
+.segBtnHrt {
+  color: rgba(28, 44, 71, 0.5);
+  border-right-color: rgba(28, 44, 71, 0.12);
+}
+
+.segBtnHrtActive {
+  background: #1c2c47;
+  color: #f4ede2;
+}
+
+/* ---------- Loading spinner ---------- */
+.spinner {
+  width: 48px;
+  height: 48px;
+  border: 3px solid rgba(201, 169, 97, 0.15);
+  border-top-color: #c9a961;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 24px auto;
+}
+
+.spinnerHrt {
+  border-color: rgba(28, 44, 71, 0.15);
+  border-top-color: #1c2c47;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ---------- Report cards ---------- */
+.pill {
+  display: inline-block;
+  font-family: var(--sans);
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 5px 14px;
+  border-radius: 999px;
+  margin-bottom: 20px;
+}
+
+.pillTrt { background: rgba(201, 169, 97, 0.15); color: #c9a961; }
+.pillHrt { background: rgba(28, 44, 71, 0.1); color: #1c2c47; }
+
+.step {
+  display: flex;
+  gap: 14px;
+  padding: 14px 0;
+  border-bottom: 1px solid;
+}
+
+.step:last-child { border-bottom: none; }
+
+.stepTrt { border-bottom-color: rgba(244, 237, 226, 0.08); }
+.stepHrt { border-bottom-color: rgba(28, 44, 71, 0.08); }
+
+.stepNum {
+  font-family: var(--cinzel);
+  font-size: 20px;
+  font-weight: 500;
+  flex-shrink: 0;
+  width: 28px;
+}
+
+.stepNumTrt { color: #c9a961; }
+.stepNumHrt { color: #1c2c47; }
+
+.stepTitle {
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.stepTitleTrt { color: #f4ede2; }
+.stepTitleHrt { color: #1c2c47; }
+
+.stepDesc {
+  font-family: var(--sans);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.stepDescTrt { color: rgba(244, 237, 226, 0.5); }
+.stepDescHrt { color: rgba(28, 44, 71, 0.5); }
+
+.stepHighlight {
+  border: 1px solid;
+  border-radius: 10px;
+  padding: 14px;
+  margin: 4px 0;
+}
+
+.stepHighlightTrt { border-color: rgba(201, 169, 97, 0.25); background: rgba(201, 169, 97, 0.04); }
+.stepHighlightHrt { border-color: rgba(28, 44, 71, 0.2); background: rgba(28, 44, 71, 0.04); }
+
+/* ---------- Finding cards ---------- */
+.finding {
+  padding: 18px;
+  border-radius: 10px;
+  border: 1px solid;
+  margin-bottom: 12px;
+}
+
+.findingTrt { border-color: rgba(201, 169, 97, 0.2); }
+.findingHrt { border-color: rgba(28, 44, 71, 0.15); }
+
+.findingHead {
+  font-family: var(--cinzel);
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+
+.findingHeadTrt { color: #f4ede2; }
+.findingHeadHrt { color: #1c2c47; }
+
+.findingBody {
+  font-family: var(--sans);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.findingBodyTrt { color: rgba(244, 237, 226, 0.6); }
+.findingBodyHrt { color: rgba(28, 44, 71, 0.6); }
+
+.locked {
+  position: relative;
+  filter: blur(4px);
+  user-select: none;
+  pointer-events: none;
+}
+
+.lockOverlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  filter: none;
+}
+
+.lockPill {
+  font-family: var(--sans);
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 8px 18px;
+  border-radius: 999px;
+  font-weight: 600;
+}
+
+.lockPillTrt { background: #c9a961; color: #1c2c47; }
+.lockPillHrt { background: #1c2c47; color: #f4ede2; }
+
+/* ---------- Test cards ---------- */
+.testCard {
+  padding: 20px;
+  border-radius: 10px;
+  border: 1px solid;
+  margin-bottom: 12px;
+}
+
+.testCardTrt { border-color: rgba(201, 169, 97, 0.2); }
+.testCardHrt { border-color: rgba(28, 44, 71, 0.15); }
+
+.testName {
+  font-family: var(--cinzel);
+  font-size: 18px;
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+
+.testNameTrt { color: #f4ede2; }
+.testNameHrt { color: #1c2c47; }
+
+.testMeasures {
+  font-family: var(--sans);
+  font-size: 12px;
+  line-height: 1.5;
+  margin-bottom: 14px;
+}
+
+.testMeasuresTrt { color: rgba(244, 237, 226, 0.5); }
+.testMeasuresHrt { color: rgba(28, 44, 71, 0.5); }
+
+.priceRow {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.priceCol { flex: 1; }
+
+.priceLabel {
+  font-family: var(--sans);
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+.priceLabelTrt { color: rgba(244, 237, 226, 0.4); }
+.priceLabelHrt { color: rgba(28, 44, 71, 0.4); }
+
+.priceVal {
+  font-family: var(--cinzel);
+  font-size: 22px;
+  font-weight: 500;
+}
+
+.priceValTrt { color: #c9a961; }
+.priceValHrt { color: #1c2c47; }
+
+/* ---------- Decision CTAs ---------- */
+.ctaStack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.ctaCard {
+  padding: 18px 20px;
+  border-radius: 10px;
+  border: 2px solid;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  background: transparent;
+  text-align: left;
+  width: 100%;
+}
+
+.ctaCard:active { transform: translateY(1px); }
+
+.ctaPrimary.ctaTrt {
+  background: #c9a961;
+  border-color: #c9a961;
+}
+
+.ctaPrimary.ctaHrt {
+  background: #1c2c47;
+  border-color: #1c2c47;
+}
+
+.ctaEyebrow {
+  font-family: var(--sans);
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.ctaEyebrowTrt { color: #c9a961; }
+.ctaEyebrowHrt { color: #1c2c47; }
+.ctaPrimary .ctaEyebrowTrt { color: #1c2c47; }
+.ctaPrimary .ctaEyebrowHrt { color: #f4ede2; }
+
+.ctaTitle {
+  font-family: var(--cinzel);
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 2px;
+}
+
+.ctaTitleTrt { color: #f4ede2; }
+.ctaTitleHrt { color: #1c2c47; }
+.ctaPrimary .ctaTitleTrt { color: #1c2c47; }
+.ctaPrimary .ctaTitleHrt { color: #f4ede2; }
+
+.ctaSub {
+  font-family: var(--sans);
+  font-size: 12px;
+}
+
+.ctaSubTrt { color: rgba(244, 237, 226, 0.5); }
+.ctaSubHrt { color: rgba(28, 44, 71, 0.5); }
+.ctaPrimary .ctaSubTrt { color: rgba(28, 44, 71, 0.7); }
+.ctaPrimary .ctaSubHrt { color: rgba(244, 237, 226, 0.7); }
+
+.ctaOutlined.ctaTrt { border-color: rgba(201, 169, 97, 0.3); }
+.ctaOutlined.ctaTrt:hover { border-color: #c9a961; }
+.ctaOutlined.ctaHrt { border-color: rgba(28, 44, 71, 0.2); }
+.ctaOutlined.ctaHrt:hover { border-color: #1c2c47; }
+
+.reportDate {
+  font-family: var(--sans);
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-align: right;
+}
+
+.reportDateTrt { color: rgba(244, 237, 226, 0.3); }
+.reportDateHrt { color: rgba(28, 44, 71, 0.3); }
+
+/* ---------- Mobile ---------- */
+@media (max-width: 768px) {
+  .shell { padding: 16px; }
+  .cardInner { padding: 28px 20px 24px; }
+  .title { font-size: 24px; }
+  .segBtn { font-size: 10px; padding: 8px 2px; }
+}
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .spinner { animation: none; }
+  .progressFill { transition: none; }
+}
