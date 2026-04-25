@@ -12,8 +12,8 @@
   transition: background 0.5s ease;
 }
 
-.shellTrt { background: #1c2c47; }
-.shellHrt { background: #f4ede2; }
+.shellTrt { background: #f4ede2; }
+.shellHrt { background: #1c2c47; }
 
 /* ---------- Card frame ---------- */
 .card {
