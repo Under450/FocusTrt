@@ -1,6 +1,7 @@
 import Link from "next/link";
 import styles from "../dashboard/dashboard.module.css";
 import MemberSidebar from "./MemberSidebar";
+import BiomarkerRing from "./BiomarkerRing";
 
 export default function MemberDashboard() {
   return (
@@ -66,31 +67,11 @@ export default function MemberDashboard() {
 
         {/* KPIs */}
         <div className={styles.kpiRow}>
-          <div className={styles.kpi}>
-            <div className={styles.kpiLabel}>TOTAL T</div>
-            <div className={styles.kpiVal}>782</div>
-            <div className={styles.kpiNote}>▲ 34%</div>
-          </div>
-          <div className={styles.kpi}>
-            <div className={styles.kpiLabel}>FREE T</div>
-            <div className={styles.kpiVal}>18.2</div>
-            <div className={styles.kpiNote}>Optimal</div>
-          </div>
-          <div className={styles.kpi}>
-            <div className={styles.kpiLabel}>ESTRADIOL</div>
-            <div className={styles.kpiVal}>28</div>
-            <div className={styles.kpiNote}>Balanced</div>
-          </div>
-          <div className={styles.kpi}>
-            <div className={styles.kpiLabel}>HAEMATOCRIT</div>
-            <div className={styles.kpiVal}>48.1</div>
-            <div className={styles.kpiNote}>In range</div>
-          </div>
-          <div className={styles.kpi}>
-            <div className={styles.kpiLabel}>SHBG</div>
-            <div className={styles.kpiVal}>32</div>
-            <div className={styles.kpiNote}>Healthy</div>
-          </div>
+          <BiomarkerRing label="Total T" value={724} unit="ng/dL" min={300} max={1000} />
+          <BiomarkerRing label="Free T" value={18.2} unit="pg/mL" min={9} max={30} />
+          <BiomarkerRing label="Estradiol" value={28} unit="pg/mL" min={10} max={40} />
+          <BiomarkerRing label="Haematocrit" value={48.1} unit="%" min={38} max={50} />
+          <BiomarkerRing label="SHBG" value={32} unit="nmol/L" min={18} max={54} />
         </div>
 
         {/* Treatments */}
