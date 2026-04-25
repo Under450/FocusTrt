@@ -128,7 +128,9 @@
 }
 
 .option {
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   width: 100%;
   text-align: left;
   padding: 14px 18px;
@@ -139,6 +141,19 @@
   transition: all 0.2s ease;
   border: 1px solid;
   background: transparent;
+}
+
+.tick {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  margin-left: 12px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.tickVisible {
+  opacity: 1;
 }
 
 .optionTrt {

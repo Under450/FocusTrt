@@ -192,38 +192,50 @@ export default function AssessmentPage() {
               {/* Single select */}
               {card.type === "single" && (
                 <div className={s.options}>
-                  {getOptions().map((opt) => (
-                    <button
-                      key={opt}
-                      className={cls(
-                        s.option,
-                        t ? s.optionTrt : s.optionHrt,
-                        answers[card.id] === opt && (t ? s.optionTrtSelected : s.optionHrtSelected)
-                      )}
-                      onClick={() => setAnswer(card.id, opt)}
-                    >
-                      {opt}
-                    </button>
-                  ))}
+                  {getOptions().map((opt) => {
+                    const selected = answers[card.id] === opt;
+                    return (
+                      <button
+                        key={opt}
+                        className={cls(
+                          s.option,
+                          t ? s.optionTrt : s.optionHrt,
+                          selected && (t ? s.optionTrtSelected : s.optionHrtSelected)
+                        )}
+                        onClick={() => setAnswer(card.id, opt)}
+                      >
+                        <span>{opt}</span>
+                        <svg className={cls(s.tick, selected && s.tickVisible)} viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M4 10.5L8 14.5L16 6.5" stroke={t ? "#c9a961" : "#1c2c47"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      </button>
+                    );
+                  })}
                 </div>
               )}
 
               {/* Multi select */}
               {card.type === "multi" && (
                 <div className={s.options}>
-                  {getOptions().map((opt) => (
-                    <button
-                      key={opt}
-                      className={cls(
-                        s.option,
-                        t ? s.optionTrt : s.optionHrt,
-                        ((answers[card.id] as string[]) || []).includes(opt) && (t ? s.optionTrtSelected : s.optionHrtSelected)
-                      )}
-                      onClick={() => toggleMulti(card.id, opt)}
-                    >
-                      {opt}
-                    </button>
-                  ))}
+                  {getOptions().map((opt) => {
+                    const selected = ((answers[card.id] as string[]) || []).includes(opt);
+                    return (
+                      <button
+                        key={opt}
+                        className={cls(
+                          s.option,
+                          t ? s.optionTrt : s.optionHrt,
+                          selected && (t ? s.optionTrtSelected : s.optionHrtSelected)
+                        )}
+                        onClick={() => toggleMulti(card.id, opt)}
+                      >
+                        <span>{opt}</span>
+                        <svg className={cls(s.tick, selected && s.tickVisible)} viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M4 10.5L8 14.5L16 6.5" stroke={t ? "#c9a961" : "#1c2c47"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      </button>
+                    );
+                  })}
                 </div>
               )}
 
