@@ -36,7 +36,14 @@ Tests rules:
   - Complete Male Optimisation Panel — comprehensive baseline — £179 home, £229 clinic
   - Complete Female Optimisation Panel — comprehensive baseline — £199 home, £249 clinic
 - Pick the test that maps best to this patient's primary concern as test #1
-- Pick a complementary test as test #2 (locked) — usually the comprehensive panel for that sex`;
+- Pick a complementary test as test #2 (locked) — usually the comprehensive panel for that sex
+
+You will receive validated clinical screening scores. Use them appropriately:
+- ADAM positive = strongly suggests androgen deficiency, recommend testing
+- IIEF-5 severity classification — incorporate into findings
+- PHQ-9 — depression often co-occurs with low T or menopause; if score moderate+, recommend co-management with mental health support, not just hormones
+- PHQ-9 safety concern flag — if true, the locked finding should gently mention the importance of mental health support alongside hormone investigation, never alarmist
+- Greene Climacteric sub-scores tell you which symptom domain dominates (vasomotor / psychological / somatic / sexual). Anchor recommendations accordingly.`;
 
 function buildUserMessage(answers: Answers): string {
   const symptoms = (answers.symptoms as string[]) || [];
@@ -44,12 +51,32 @@ function buildUserMessage(answers: Answers): string {
   const safety = (answers.safety as string[]) || [];
   const goals = (answers.goals as string[]) || [];
   const outcomes = (answers.outcomes as string[]) || [];
+  const medications = (answers.medications as string[]) || [];
+  const isMale = answers.sex !== "I'm a woman";
+  const greene = answers.greene as { psychological: number; somatic: number; vasomotor: number; sexual: number; total: number } | undefined;
+
+  let clinicalScreening = "";
+  if (isMale) {
+    clinicalScreening = `
+ADAM screen: ${answers.adam_score ?? "Not completed"}/10 — ${answers.adam_positive ? "POSITIVE for androgen deficiency" : "Negative"}
+IIEF-5 score: ${answers.iief5_score ?? "Not completed"}/25 — ${answers.iief5_severity || "Not scored"}
+PHQ-9 score: ${answers.phq9_score ?? "Not completed"}/27 — ${answers.phq9_severity || "Not scored"}${answers.phq9_safety_concern ? " — SAFETY CONCERN FLAGGED" : ""}`;
+  } else {
+    clinicalScreening = greene ? `
+Greene Climacteric scores: Psychological ${greene.psychological}/33, Somatic ${greene.somatic}/21, Vasomotor ${greene.vasomotor}/6, Sexual ${greene.sexual}/3, Total ${greene.total}/63
+Pregnancy status: ${answers.pregnancy || "Not specified"}` : `
+Greene Climacteric Scale: Not completed
+Pregnancy status: ${answers.pregnancy || "Not specified"}`;
+  }
 
   return `Patient profile:
 Sex: ${answers.sex || "Not specified"}
 Age: ${answers.age || "Not provided"}
 Weight: ${answers.weight ? `${answers.weight} kg` : "Not provided"}
 Height: ${answers.height ? `${answers.height} cm` : "Not provided"}
+Smoking status: ${answers.smoking || "Not specified"}
+Current medications: ${medications.join(", ") || "None reported"}
+Other medications/substances: ${answers.other_medications || "None reported"}
 Symptoms: ${symptoms.join(", ") || "None selected"}
 Symptom duration: ${answers.duration || "Not specified"}
 Previously tried: ${tried.join(", ") || "Nothing"}
@@ -61,6 +88,7 @@ Sleep hours: ${answers.sleep || "Not specified"}
 Stress level: ${answers.stress || "Not specified"}
 Alcohol: ${answers.alcohol || "Not specified"}
 Specific outcomes: ${outcomes.length > 0 ? outcomes.join(", ") : "Not asked"}
+${clinicalScreening}
 
 Generate the personalised report JSON for this patient.`;
 }
