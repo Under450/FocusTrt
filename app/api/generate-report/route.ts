@@ -84,7 +84,7 @@ export async function POST(request: Request) {
     console.log("[generate-report] Sending to Claude:", userMsg.slice(0, 200));
 
     const message = await client.messages.create({
-      model: "claude-sonnet-4-5",
+      model: "claude-sonnet-4-20250514",
       max_tokens: 1024,
       system: SYSTEM_PROMPT,
       messages: [{ role: "user", content: userMsg }],
