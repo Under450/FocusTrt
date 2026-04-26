@@ -80,16 +80,23 @@ export async function POST(request: Request) {
     const Anthropic = (await import("@anthropic-ai/sdk")).default;
     const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
+    const userMsg = buildUserMessage(answers);
+    console.log("[generate-report] Sending to Claude:", userMsg.slice(0, 200));
+
     const message = await client.messages.create({
-      model: "claude-sonnet-4-5-20250514",
+      model: "claude-sonnet-4-5",
       max_tokens: 1024,
       system: SYSTEM_PROMPT,
-      messages: [{ role: "user", content: buildUserMessage(answers) }],
+      messages: [{ role: "user", content: userMsg }],
     });
 
-    const text =
+    const rawText =
       message.content[0].type === "text" ? message.content[0].text : "";
-    const data = JSON.parse(text);
+    console.log("[generate-report] Claude raw response:", rawText.slice(0, 200));
+
+    // Strip markdown code fences if present
+    const cleaned = rawText.replace(/```json\n?/g, "").replace(/\n?```/g, "").trim();
+    const data = JSON.parse(cleaned);
 
     // Validate structure
     if (
@@ -98,11 +105,13 @@ export async function POST(request: Request) {
       data.findings.length < 3 ||
       data.tests.length < 1
     ) {
+      console.error("[generate-report] Invalid structure:", JSON.stringify(data).slice(0, 300));
       throw new Error("Invalid response structure");
     }
 
     return NextResponse.json(data);
-  } catch {
+  } catch (err) {
+    console.error("[generate-report] Failed, using local fallback:", err);
     // Fall back to local logic on any failure
     return NextResponse.json({
       findings: generateFindings(answers),
