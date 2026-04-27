@@ -1,229 +1,261 @@
 /* =====================================================================
-   ELEVATE — Unified transformation landing
-   taste-skill: VARIANCE 8, MOTION 6, DENSITY 2
+   ELEVATE — Rich editorial landing
+   New palette: warm charcoal, bone ivory, burnished gold
    ===================================================================== */
 
-/* ---------- Page shell ---------- */
 .page {
   min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
   position: relative;
   overflow: hidden;
-  transition: background-color 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+  background: #141210;
+  color: #ede6d8;
+  font-family: var(--cinzel);
 }
 
-.pageDefault { background-color: #0d1520; }
-.pageHim { background-color: #0a1220; }
-.pageHer { background-color: #f4ede2; }
-
-/* Grain overlay — taste-skill: fixed, pointer-events-none pseudo */
-.page::after {
-  content: "";
+/* ── Rich gradient base ── */
+.backdrop {
   position: fixed;
   inset: 0;
-  z-index: 60;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 30% 20%, rgba(184, 149, 106, 0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 80% at 70% 80%, rgba(184, 149, 106, 0.04) 0%, transparent 50%),
+    linear-gradient(170deg, #1a1714 0%, #141210 40%, #0f0e0c 100%);
+}
+
+/* ── Film grain ── */
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: 55;
   pointer-events: none;
-  opacity: 0.025;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-repeat: repeat;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   mix-blend-mode: overlay;
 }
 
-/* ---------- Content stack ---------- */
-.content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  position: relative;
-  z-index: 2;
-  padding: 0 24px;
+/* ── Hover image overlays ── */
+.imageOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  background-size: cover;
+  background-position: center;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.8s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
-/* ---------- Logo ---------- */
-.logo {
-  width: clamp(80px, 12vw, 120px);
-  height: auto;
-  margin-bottom: 40px;
-  filter: drop-shadow(0 2px 16px rgba(0, 0, 0, 0.2));
+.imageOverlayVisible {
+  opacity: 1;
 }
 
-/* ---------- Wordmark ELEVATE ---------- */
-.wordmark {
-  font-family: var(--cinzel);
-  font-size: clamp(48px, 8vw, 96px);
-  font-weight: 400;
-  letter-spacing: clamp(8px, 1.5vw, 18px);
-  line-height: 1;
-  margin-bottom: 12px;
-  transition: color 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+.imageHim {
+  background-image: url("/brand/elevate-trt-hero.jpg");
 }
 
-.wordmarkDefault { color: #f4ede2; }
-.wordmarkHer { color: #0d1520; }
-
-/* ---------- Tagline ---------- */
-.tagline {
-  font-family: var(--cinzel);
-  font-size: clamp(9px, 1.2vw, 12px);
-  font-weight: 400;
-  letter-spacing: clamp(3px, 0.6vw, 6px);
-  text-transform: uppercase;
-  margin-bottom: clamp(48px, 8vh, 80px);
-  transition: color 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+.imageHer {
+  background-image: url("/brand/elevate-product.jpg");
 }
 
-.taglineDefault { color: rgba(201, 169, 97, 0.4); }
-.taglineHer { color: rgba(13, 21, 32, 0.35); }
-
-/* ---------- Paths container ---------- */
-.paths {
-  display: flex;
-  align-items: center;
-  gap: clamp(32px, 6vw, 80px);
-}
-
-/* ---------- Divider dot ---------- */
-.dot {
-  width: 3px;
-  height: 3px;
-  border-radius: 50%;
-  flex-shrink: 0;
-  transition: background-color 0.5s ease;
-}
-
-.dotDefault { background-color: rgba(201, 169, 97, 0.3); }
-.dotHer { background-color: rgba(13, 21, 32, 0.2); }
-
-/* ---------- Path button ---------- */
-.path {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  cursor: pointer;
-  background: none;
-  border: none;
-  padding: 20px 32px;
-  position: relative;
-  outline: none;
-}
-
-/* Subtle underline indicator */
-.path::after {
+/* Dark scrim over image */
+.imageOverlay::after {
   content: "";
   position: absolute;
-  bottom: 12px;
-  left: 50%;
-  width: 0;
+  inset: 0;
+  background: rgba(20, 18, 16, 0.82);
+}
+
+/* ── Content layer ── */
+.content {
+  position: relative;
+  z-index: 10;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(80px, 12vh, 140px) clamp(32px, 8vw, 120px);
+}
+
+/* ── Logo ── */
+.logo {
+  width: clamp(48px, 6vw, 72px);
+  height: auto;
+  margin-bottom: 48px;
+  opacity: 0.7;
+  filter: drop-shadow(0 0 24px rgba(184, 149, 106, 0.15));
+}
+
+/* ── Main headline ── */
+.headline {
+  font-size: clamp(52px, 9vw, 128px);
+  font-weight: 400;
+  letter-spacing: clamp(2px, 0.4vw, 6px);
+  line-height: 0.92;
+  margin-bottom: 24px;
+  color: #ede6d8;
+}
+
+.headlineDot {
+  color: #b8956a;
+}
+
+/* ── Subline ── */
+.subline {
+  font-family: var(--sans);
+  font-size: clamp(14px, 1.6vw, 18px);
+  font-weight: 400;
+  line-height: 1.6;
+  color: rgba(237, 230, 216, 0.35);
+  max-width: 420px;
+  margin-bottom: clamp(48px, 6vh, 72px);
+}
+
+/* ── Horizontal rule ── */
+.rule {
+  width: clamp(40px, 6vw, 80px);
   height: 1px;
-  transform: translateX(-50%);
-  transition: width 0.4s cubic-bezier(0.23, 1, 0.32, 1), background-color 0.5s ease;
+  background: rgba(184, 149, 106, 0.25);
+  margin-bottom: clamp(36px, 5vh, 56px);
+  border: none;
 }
 
-.pathDefault::after { background-color: #c9a961; }
-.pathHer::after { background-color: #0d1520; }
-
-.path:hover::after,
-.path:focus-visible::after {
-  width: 40px;
+/* ── Path buttons ── */
+.paths {
+  display: flex;
+  gap: clamp(24px, 4vw, 64px);
+  align-items: flex-start;
 }
 
-/* Focus ring — taste-skill: accessible focus */
-.path:focus-visible {
-  outline: 1px solid #c9a961;
-  outline-offset: 8px;
+.pathBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  text-align: left;
+  outline: none;
+  position: relative;
 }
 
-/* Active press — Emil: scale 0.97 on active */
-.path:active {
-  transform: scale(0.97);
+.pathBtn:focus-visible {
+  outline: 1px solid #b8956a;
+  outline-offset: 12px;
 }
 
-/* ---------- Path label ---------- */
-.pathLabel {
+.pathBtn:active {
+  transform: scale(0.98);
+}
+
+.pathEyebrow {
   font-family: var(--sans);
   font-size: 10px;
   letter-spacing: 3px;
   text-transform: uppercase;
-  transition: color 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+  color: rgba(184, 149, 106, 0.5);
+  margin-bottom: 8px;
+  transition: color 0.3s ease;
 }
 
-.pathLabelDefault { color: rgba(244, 237, 226, 0.35); }
-.pathLabelHimHover { color: #c9a961; }
-.pathLabelHer { color: rgba(13, 21, 32, 0.35); }
-.pathLabelHerHover { color: #0d1520; }
+.pathBtnHovered .pathEyebrow {
+  color: #b8956a;
+}
 
-/* ---------- Path title ---------- */
-.pathTitle {
+.pathName {
   font-family: var(--cinzel);
-  font-size: clamp(36px, 5vw, 56px);
+  font-size: clamp(32px, 4.5vw, 56px);
   font-weight: 400;
-  letter-spacing: 4px;
+  letter-spacing: 3px;
+  color: rgba(237, 230, 216, 0.5);
+  transition: color 0.3s cubic-bezier(0.23, 1, 0.32, 1);
   line-height: 1;
-  transition: color 0.5s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
-.pathTitleDefault { color: #f4ede2; }
-.pathTitleHimHover { color: #f4ede2; }
-.pathTitleHer { color: #0d1520; }
+.pathBtnHovered .pathName {
+  color: #ede6d8;
+}
 
-/* ---------- Path subtitle (hover reveal) ---------- */
-.pathSub {
+/* Underline on hover */
+.pathLine {
+  display: block;
+  width: 0;
+  height: 1px;
+  background: #b8956a;
+  margin-top: 10px;
+  transition: width 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.pathBtnHovered .pathLine {
+  width: 100%;
+}
+
+/* Hover description */
+.pathDesc {
   font-family: var(--sans);
   font-size: 12px;
-  letter-spacing: 0.3px;
+  color: rgba(237, 230, 216, 0.3);
   line-height: 1.5;
   max-width: 200px;
-  text-align: center;
   overflow: hidden;
 }
 
-.pathSubDefault { color: rgba(244, 237, 226, 0.35); }
-.pathSubHer { color: rgba(13, 21, 32, 0.4); }
-
-/* ---------- Admin ---------- */
-.admin {
-  position: fixed;
-  top: 20px;
-  right: 24px;
-  z-index: 30;
-  font-family: var(--sans);
-  font-size: 10px;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  text-decoration: none;
-  transition: color 0.5s ease;
+/* ── Separator between paths ── */
+.pathSep {
+  font-family: var(--cinzel);
+  font-size: clamp(24px, 3vw, 40px);
+  color: rgba(184, 149, 106, 0.12);
+  align-self: center;
+  padding-top: 12px;
+  user-select: none;
 }
 
-.adminDefault { color: rgba(244, 237, 226, 0.1); }
-.adminDefault:hover { color: rgba(244, 237, 226, 0.3); }
-.adminHer { color: rgba(13, 21, 32, 0.15); }
-.adminHer:hover { color: rgba(13, 21, 32, 0.4); }
-
-/* ---------- Bottom credit ---------- */
-.credit {
+/* ── Pillars — bottom left ── */
+.pillars {
   position: fixed;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 30;
+  bottom: clamp(20px, 3vh, 32px);
+  left: clamp(32px, 8vw, 120px);
+  z-index: 10;
+  font-family: var(--cinzel);
+  font-size: 9px;
+  font-weight: 400;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: rgba(184, 149, 106, 0.15);
+  pointer-events: none;
+}
+
+/* ── Clinician — bottom right ── */
+.clinician {
+  position: fixed;
+  bottom: clamp(20px, 3vh, 32px);
+  right: clamp(32px, 8vw, 120px);
+  z-index: 10;
   font-family: var(--sans);
   font-size: 9px;
   letter-spacing: 1.5px;
   text-transform: uppercase;
+  color: rgba(237, 230, 216, 0.08);
   pointer-events: none;
-  white-space: nowrap;
-  transition: color 0.5s ease;
+  text-align: right;
 }
 
-.creditDefault { color: rgba(244, 237, 226, 0.08); }
-.creditHer { color: rgba(13, 21, 32, 0.1); }
+/* ── Admin ── */
+.admin {
+  position: fixed;
+  top: 24px;
+  right: clamp(32px, 8vw, 120px);
+  z-index: 20;
+  font-family: var(--sans);
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: rgba(237, 230, 216, 0.1);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
 
-/* ---------- Wipe ---------- */
+.admin:hover { color: rgba(237, 230, 216, 0.3); }
+
+/* ── Wipe ── */
 .wipe {
   position: fixed;
   inset: 0;
@@ -231,35 +263,30 @@
   pointer-events: none;
 }
 
-/* ---------- Mobile ---------- */
+/* ── Mobile ── */
 @media (max-width: 768px) {
+  .content {
+    padding: 100px 28px 80px;
+  }
+
   .paths {
     flex-direction: column;
-    gap: 20px;
+    gap: 28px;
   }
 
-  .dot { display: none; }
+  .pathSep { display: none; }
 
-  .path {
-    padding: 16px 24px;
-  }
-}
+  .pillars, .clinician { display: none; }
 
-/* ---------- Touch hover guard (Emil) ---------- */
-@media (hover: hover) and (pointer: fine) {
-  .path:hover {
-    transform: translateY(-2px);
-    transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1);
-  }
-
-  .path:hover:active {
-    transform: scale(0.97) translateY(0);
+  .logo {
+    width: 40px;
+    margin-bottom: 32px;
   }
 }
 
-/* ---------- Reduced motion ---------- */
+/* ── Reduced motion ── */
 @media (prefers-reduced-motion: reduce) {
-  .page { transition: none; }
-  .wordmark, .tagline, .pathLabel, .pathTitle, .path::after { transition: none; }
-  .path:active { transform: none; }
+  .imageOverlay { transition: none; }
+  .pathName, .pathEyebrow, .pathLine { transition: none; }
+  .pathBtn:active { transform: none; }
 }

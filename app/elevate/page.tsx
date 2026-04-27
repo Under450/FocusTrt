@@ -1,11 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import {
-  motion,
-  useReducedMotion,
-  AnimatePresence,
-} from "framer-motion";
+import { motion, useReducedMotion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
@@ -15,41 +11,14 @@ function cls(...c: (string | false | undefined | null)[]) {
   return c.filter(Boolean).join(" ");
 }
 
-/* ── Character-by-character stagger reveal (Emil: 30-80ms stagger) ── */
-function CharReveal({ text, delay = 0 }: { text: string; delay?: number }) {
-  const reduced = useReducedMotion();
-  if (reduced) return <>{text}</>;
-  return (
-    <span aria-label={text}>
-      {text.split("").map((ch, i) => (
-        <motion.span
-          key={`${i}-${ch}`}
-          style={{ display: "inline-block", whiteSpace: ch === " " ? "pre" : undefined }}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{
-            type: "spring",
-            stiffness: 260,
-            damping: 22,
-            delay: delay + i * 0.045,
-          }}
-        />
-      ))}
-    </span>
-  );
-}
-
 export default function ElevateLanding() {
   const router = useRouter();
   const reduced = useReducedMotion();
   const [hover, setHover] = useState<"none" | "him" | "her">("none");
   const [wipe, setWipe] = useState<"him" | "her" | null>(null);
-  const [mounted, setMounted] = useState(false);
+  const [ready, setReady] = useState(false);
 
-  useEffect(() => { setMounted(true); }, []);
-
-  const isHer = hover === "her";
-  const isHim = hover === "him";
+  useEffect(() => { setReady(true); }, []);
 
   function enter(side: "him" | "her") {
     if (reduced) {
@@ -59,161 +28,145 @@ export default function ElevateLanding() {
     setWipe(side);
     setTimeout(() => {
       router.push(side === "him" ? "/assessment?path=trt" : "/assessment?path=hrt");
-    }, 550);
+    }, 600);
   }
 
-  return (
-    <div className={cls(
-      s.page,
-      isHer ? s.pageHer : s.pageDefault,
-    )}>
-      {/* Admin */}
-      <Link
-        href="/login"
-        className={cls(s.admin, isHer ? s.adminHer : s.adminDefault)}
-      >
-        Admin
-      </Link>
+  const stagger = (i: number) => ({
+    initial: reduced ? {} : { opacity: 0, y: 16 },
+    animate: ready ? { opacity: 1, y: 0 } : {},
+    transition: { type: "spring" as const, stiffness: 200, damping: 24, delay: 0.15 * i },
+  });
 
-      {/* Main content — centred, minimal */}
+  return (
+    <div className={s.page}>
+      {/* Rich gradient backdrop */}
+      <div className={s.backdrop} />
+
+      {/* Image overlays — fade in on hover */}
+      <div className={cls(s.imageOverlay, s.imageHim, hover === "him" && s.imageOverlayVisible)} />
+      <div className={cls(s.imageOverlay, s.imageHer, hover === "her" && s.imageOverlayVisible)} />
+
+      {/* Grain */}
+      <div className={s.grain} />
+
+      {/* Admin */}
+      <Link href="/login" className={s.admin}>Admin</Link>
+
+      {/* Main content — left-aligned editorial */}
       <div className={s.content}>
         {/* Logo */}
-        <motion.div
-          initial={reduced ? {} : { opacity: 0, scale: 0.96 }}
-          animate={mounted ? { opacity: 1, scale: 1 } : {}}
-          transition={{ type: "spring", stiffness: 200, damping: 24, delay: 0.1 }}
-        >
+        <motion.div {...stagger(0)}>
           <Image
-            src={isHer ? "/brand/logo-cream.png" : "/brand/logo-navy.png"}
+            src="/brand/logo-navy.png"
             alt=""
             aria-hidden="true"
-            width={120}
-            height={isHer ? 88 : 128}
+            width={72}
+            height={77}
             className={s.logo}
             priority
           />
         </motion.div>
 
-        {/* ELEVATE wordmark */}
-        <h1 className={cls(s.wordmark, isHer ? s.wordmarkHer : s.wordmarkDefault)}>
-          {mounted ? <CharReveal text="ELEVATE" delay={0.3} /> : "ELEVATE"}
-        </h1>
+        {/* Headline */}
+        <motion.h1 className={s.headline} {...stagger(1)}>
+          ELEVATE<span className={s.headlineDot}>.</span>
+        </motion.h1>
 
-        {/* Tagline */}
-        <motion.p
-          className={cls(s.tagline, isHer ? s.taglineHer : s.taglineDefault)}
-          initial={reduced ? {} : { opacity: 0 }}
-          animate={mounted ? { opacity: 1 } : {}}
-          transition={{ duration: 0.6, delay: 0.9, ease: [0.23, 1, 0.32, 1] }}
-        >
-          OPTIMISE · RESTORE · REBALANCE
+        {/* Subline */}
+        <motion.p className={s.subline} {...stagger(2)}>
+          Clinician-led hormone optimisation for men and women. Bloodwork-first.
+          Protocol-driven. Fourteen UK clinics under one endocrinologist.
         </motion.p>
 
-        {/* Two paths */}
-        <motion.div
-          className={s.paths}
-          initial={reduced ? {} : { opacity: 0, y: 12 }}
-          animate={mounted ? { opacity: 1, y: 0 } : {}}
-          transition={{ type: "spring", stiffness: 180, damping: 22, delay: 1.2 }}
-        >
-          {/* FOR HIM */}
+        {/* Rule */}
+        <motion.hr className={s.rule} {...stagger(3)} />
+
+        {/* Paths */}
+        <motion.div className={s.paths} {...stagger(4)}>
+          {/* HIM */}
           <button
-            className={cls(s.path, isHer ? s.pathHer : s.pathDefault)}
+            className={cls(s.pathBtn, hover === "him" && s.pathBtnHovered)}
             onMouseEnter={() => setHover("him")}
             onMouseLeave={() => setHover("none")}
             onClick={() => enter("him")}
-            aria-label="Start TRT assessment for men"
+            aria-label="Start testosterone assessment"
           >
-            <span className={cls(
-              s.pathLabel,
-              isHim ? s.pathLabelHimHover : isHer ? s.pathLabelHer : s.pathLabelDefault,
-            )}>
-              For Him
-            </span>
-            <motion.span
-              className={cls(s.pathTitle, isHer ? s.pathTitleHer : s.pathTitleDefault)}
-              animate={{ scale: isHim ? 1.08 : 1 }}
+            <div className={s.pathEyebrow}>For Him</div>
+            <motion.div
+              className={s.pathName}
+              animate={{ scale: hover === "him" ? 1.04 : 1 }}
               transition={{ type: "spring", stiffness: 200, damping: 20 }}
             >
               TRT
-            </motion.span>
+            </motion.div>
+            <span className={s.pathLine} />
             <AnimatePresence>
-              {isHim && (
-                <motion.span
-                  className={cls(s.pathSub, s.pathSubDefault)}
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: "auto" }}
-                  exit={{ opacity: 0, height: 0 }}
-                  transition={{ type: "spring", stiffness: 200, damping: 24 }}
+              {hover === "him" && (
+                <motion.p
+                  className={s.pathDesc}
+                  initial={{ opacity: 0, height: 0, marginTop: 0 }}
+                  animate={{ opacity: 1, height: "auto", marginTop: 12 }}
+                  exit={{ opacity: 0, height: 0, marginTop: 0 }}
+                  transition={{ type: "spring", stiffness: 200, damping: 22 }}
                 >
-                  Testosterone replacement.<br />Clinician-led. Bloodwork-first.
-                </motion.span>
+                  Testosterone replacement therapy. Restore what time and stress have taken.
+                </motion.p>
               )}
             </AnimatePresence>
           </button>
 
-          {/* Dot separator */}
-          <div className={cls(s.dot, isHer ? s.dotHer : s.dotDefault)} />
+          {/* Separator */}
+          <span className={s.pathSep}>/</span>
 
-          {/* FOR HER */}
+          {/* HER */}
           <button
-            className={cls(s.path, isHer ? s.pathHer : s.pathDefault)}
+            className={cls(s.pathBtn, hover === "her" && s.pathBtnHovered)}
             onMouseEnter={() => setHover("her")}
             onMouseLeave={() => setHover("none")}
             onClick={() => enter("her")}
-            aria-label="Start HRT assessment for women"
+            aria-label="Start hormone therapy assessment"
           >
-            <span className={cls(
-              s.pathLabel,
-              isHer && hover === "her" ? s.pathLabelHerHover : isHer ? s.pathLabelHer : s.pathLabelDefault,
-            )}>
-              For Her
-            </span>
-            <motion.span
-              className={cls(s.pathTitle, isHer ? s.pathTitleHer : s.pathTitleDefault)}
-              animate={{ scale: hover === "her" ? 1.08 : 1 }}
+            <div className={s.pathEyebrow}>For Her</div>
+            <motion.div
+              className={s.pathName}
+              animate={{ scale: hover === "her" ? 1.04 : 1 }}
               transition={{ type: "spring", stiffness: 200, damping: 20 }}
             >
               HRT
-            </motion.span>
+            </motion.div>
+            <span className={s.pathLine} />
             <AnimatePresence>
               {hover === "her" && (
-                <motion.span
-                  className={cls(s.pathSub, s.pathSubHer)}
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: "auto" }}
-                  exit={{ opacity: 0, height: 0 }}
-                  transition={{ type: "spring", stiffness: 200, damping: 24 }}
+                <motion.p
+                  className={s.pathDesc}
+                  initial={{ opacity: 0, height: 0, marginTop: 0 }}
+                  animate={{ opacity: 1, height: "auto", marginTop: 12 }}
+                  exit={{ opacity: 0, height: 0, marginTop: 0 }}
+                  transition={{ type: "spring", stiffness: 200, damping: 22 }}
                 >
-                  Hormone therapy for perimenopause.<br />Symptom-matched. Monitored.
-                </motion.span>
+                  Hormone therapy for perimenopause and beyond. Because you were never told this was treatable.
+                </motion.p>
               )}
             </AnimatePresence>
           </button>
         </motion.div>
       </div>
 
-      {/* Bottom credit */}
-      <div className={cls(s.credit, isHer ? s.creditHer : s.creditDefault)}>
-        Dr Daniel Marsh · GMC-Registered · 15 UK Clinics
-      </div>
+      {/* Bottom left — pillars */}
+      <div className={s.pillars}>Optimise · Restore · Rebalance</div>
 
-      {/* Transition wipe — Emil: clip-path inset for page transitions */}
+      {/* Bottom right — clinician */}
+      <div className={s.clinician}>Dr Daniel Marsh · GMC Registered</div>
+
+      {/* Transition wipe — circular reveal */}
       <AnimatePresence>
         {wipe && (
           <motion.div
             className={s.wipe}
-            style={{ background: wipe === "him" ? "#0a1220" : "#f4ede2" }}
-            initial={{
-              clipPath: "circle(0% at 50% 50%)",
-            }}
-            animate={{
-              clipPath: "circle(150% at 50% 50%)",
-            }}
-            transition={{
-              duration: 0.5,
-              ease: [0.77, 0, 0.175, 1],
-            }}
+            style={{ background: wipe === "him" ? "#141210" : "#ede6d8" }}
+            initial={{ clipPath: "circle(0% at 50% 50%)" }}
+            animate={{ clipPath: "circle(150% at 50% 50%)" }}
+            transition={{ duration: 0.55, ease: [0.77, 0, 0.175, 1] }}
           />
         )}
       </AnimatePresence>
