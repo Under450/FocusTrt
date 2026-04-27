@@ -1,0 +1,248 @@
+/* =====================================================================
+   ELEVATE — Split-screen entry
+   Editorial. Alive. No filler.
+   ===================================================================== */
+
+.page {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: #0d1520;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---------- Persistent wordmark ---------- */
+.wordmark {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 56px;
+  pointer-events: none;
+}
+
+.wordmarkText {
+  font-family: var(--cinzel);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 6px;
+  color: #f4ede2;
+  opacity: 0.4;
+  transition: opacity 0.4s ease;
+}
+
+.wordmarkTextHidden { opacity: 0; }
+
+/* ---------- Admin link ---------- */
+.adminLink {
+  position: fixed;
+  bottom: 20px;
+  right: 24px;
+  z-index: 40;
+  font-family: var(--sans);
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: rgba(244, 237, 226, 0.15);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.adminLink:hover { color: rgba(244, 237, 226, 0.4); }
+
+/* ---------- Split container ---------- */
+.split {
+  display: flex;
+  flex: 1;
+  position: relative;
+}
+
+/* ---------- Half panels ---------- */
+.half {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  cursor: pointer;
+  user-select: none;
+}
+
+.halfNavy { background: #0d1520; }
+.halfCream { background: #f4ede2; }
+
+/* Inner content — positioned for cursor parallax */
+.halfInner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  will-change: transform;
+  position: relative;
+  z-index: 2;
+}
+
+/* ---------- Logo ---------- */
+.logo {
+  width: clamp(60px, 8vw, 100px);
+  height: auto;
+  margin-bottom: 32px;
+  opacity: 0.7;
+  filter: drop-shadow(0 2px 12px rgba(0, 0, 0, 0.2));
+  transition: opacity 0.4s ease;
+}
+
+.halfHovered .logo { opacity: 1; }
+
+/* ---------- Label text ---------- */
+.label {
+  font-family: var(--cinzel);
+  font-size: clamp(11px, 1.4vw, 14px);
+  font-weight: 500;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  overflow: hidden;
+}
+
+.labelNavy { color: rgba(244, 237, 226, 0.5); }
+.labelCream { color: rgba(13, 21, 32, 0.4); }
+
+.halfHovered .labelNavy { color: #f4ede2; }
+.halfHovered .labelCream { color: #0d1520; }
+
+/* ---------- Large display title ---------- */
+.title {
+  font-family: var(--cinzel);
+  font-size: clamp(64px, 12vw, 140px);
+  font-weight: 400;
+  letter-spacing: 4px;
+  line-height: 0.9;
+  margin-bottom: 20px;
+}
+
+.titleNavy { color: #f4ede2; }
+.titleCream { color: #0d1520; }
+
+/* ---------- Tagline (reveals on hover) ---------- */
+.tagline {
+  font-family: var(--sans);
+  font-size: 13px;
+  letter-spacing: 1px;
+  line-height: 1.5;
+  max-width: 240px;
+  text-align: center;
+  overflow: hidden;
+}
+
+.taglineNavy { color: rgba(244, 237, 226, 0.45); }
+.taglineCream { color: rgba(13, 21, 32, 0.45); }
+
+/* ---------- Enter indicator ---------- */
+.enter {
+  font-family: var(--cinzel);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-top: 24px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.enterNavy { color: #c9a961; }
+.enterCream { color: #0d1520; }
+
+.enterArrow {
+  display: inline-block;
+  transition: transform 0.3s ease;
+}
+
+.halfHovered .enterArrow { transform: translateX(4px); }
+
+/* ---------- Divider line ---------- */
+.divider {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: rgba(201, 169, 97, 0.15);
+  z-index: 10;
+  pointer-events: none;
+  left: 50%;
+  transition: left 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* ---------- Bottom tagline ---------- */
+.bottomTag {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 40;
+  font-family: var(--cinzel);
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: rgba(201, 169, 97, 0.25);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/* ---------- Transition overlay (click to enter) ---------- */
+.transitionOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  pointer-events: none;
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 768px) {
+  .split {
+    flex-direction: column;
+  }
+
+  .title {
+    font-size: 56px;
+    letter-spacing: 2px;
+  }
+
+  .label {
+    font-size: 11px;
+  }
+
+  .logo {
+    width: 56px;
+    margin-bottom: 20px;
+  }
+
+  .divider {
+    display: none;
+  }
+
+  .bottomTag {
+    display: none;
+  }
+
+  .adminLink {
+    bottom: auto;
+    top: 16px;
+    right: 16px;
+  }
+}
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .half, .halfInner, .logo, .enterArrow, .divider {
+    transition: none !important;
+  }
+}
