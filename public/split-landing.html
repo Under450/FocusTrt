@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ELEVATE — Split Screen Landing</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Didact+Gothic&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--cinzel:'Cinzel',serif;--sans:'Didact Gothic',sans-serif}
+html,body{height:100%;font-family:var(--sans);-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+
+.page{display:flex;flex-direction:column;min-height:100vh;overflow:hidden;background:#0a1930}
+
+.topNav{position:absolute;top:0;left:0;right:0;z-index:20;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(20px,4vw,48px);height:56px}
+.navWordmark{font-family:var(--cinzel);font-size:16px;font-weight:500;letter-spacing:4px;color:#f5eadd}
+.navAdmin{font-family:var(--sans);font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#c9a961;text-decoration:none;transition:color .15s}
+.navAdmin:hover{color:#f5eadd}
+
+.split{flex:1;display:flex;position:relative;padding-top:56px}
+
+.half{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-decoration:none;cursor:pointer;transition:flex .4s cubic-bezier(.25,.46,.45,.94);position:relative;overflow:hidden;padding:48px 24px}
+.trtHalf{background:#0a1930}
+.hrtHalf{background:#f5eadd}
+
+.split:has(.trtHalf:hover) .trtHalf{flex:1.5}
+.split:has(.trtHalf:hover) .hrtHalf{flex:.8}
+.split:has(.hrtHalf:hover) .hrtHalf{flex:1.5}
+.split:has(.hrtHalf:hover) .trtHalf{flex:.8}
+
+.halfEyebrow{font-family:var(--sans);font-size:10px;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px}
+.trtEyebrow{color:#c9a961}
+.hrtEyebrow{color:#8a6b2e}
+
+.halfTitle{font-family:var(--cinzel);font-size:clamp(64px,12vw,120px);font-weight:500;letter-spacing:8px;line-height:1;margin-bottom:16px;transition:transform .4s ease}
+.half:hover .halfTitle{transform:scale(1.05)}
+.trtTitle{color:#f5eadd}
+.hrtTitle{color:#1a1410}
+
+.halfCta{font-family:var(--sans);font-size:11px;letter-spacing:2px;text-transform:uppercase;transition:opacity .2s}
+.trtCta{color:#c9a961}
+.hrtCta{color:#8a6b2e}
+.half:hover .halfCta{opacity:.8}
+
+.logoContainer{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:10;pointer-events:none;margin-top:28px}
+.logoMark{width:clamp(100px,14vw,180px);height:auto;filter:drop-shadow(0 4px 24px rgba(0,0,0,.3))}
+
+.bottomStrip{background:#0a1930;border-top:1px solid rgba(201,169,97,.15);padding:32px 24px;text-align:center;flex-shrink:0}
+.bottomWordmark{font-family:var(--cinzel);font-size:clamp(28px,4vw,42px);font-weight:500;letter-spacing:6px;color:#f5eadd;margin-bottom:8px}
+.bottomTagline{font-family:var(--cinzel);font-size:11px;font-weight:400;letter-spacing:4px;text-transform:uppercase;color:#c9a961}
+
+@media(max-width:768px){
+  .split{flex-direction:column}
+  .half{flex:1!important;padding:40px 24px}
+  .halfTitle{font-size:72px}
+  .half:hover .halfTitle{transform:none}
+  .logoContainer{margin-top:28px}
+  .logoMark{width:100px}
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <nav class="topNav">
+    <span class="navWordmark">ELEVATE</span>
+    <a href="https://focus-trt.vercel.app/login" class="navAdmin">Admin Login →</a>
+  </nav>
+
+  <div class="split">
+    <a href="https://focus-trt.vercel.app/trt/login" class="half trtHalf">
+      <p class="halfEyebrow trtEyebrow">FOR MEN</p>
+      <h1 class="halfTitle trtTitle">TRT</h1>
+      <p class="halfCta trtCta">ENTER →</p>
+    </a>
+
+    <div class="logoContainer">
+      <img src="/FocusTrt/brand/logo-navy.png" alt="ELEVATE brand mark" class="logoMark">
+    </div>
+
+    <a href="https://focus-trt.vercel.app/hrt/login" class="half hrtHalf">
+      <p class="halfEyebrow hrtEyebrow">FOR WOMEN</p>
+      <h1 class="halfTitle hrtTitle">HRT</h1>
+      <p class="halfCta hrtCta">← ENTER</p>
+    </a>
+  </div>
+
+  <div class="bottomStrip">
+    <div class="bottomWordmark">ELEVATE</div>
+    <div class="bottomTagline">OPTIMISE · RESTORE · REBALANCE</div>
+  </div>
+</div>
+</body>
+</html>
