@@ -1,188 +1,229 @@
 /* =====================================================================
-   ELEVATE — Split entry
-   Taste: DESIGN_VARIANCE 8, MOTION_INTENSITY 6, VISUAL_DENSITY 2
+   ELEVATE — Unified transformation landing
+   taste-skill: VARIANCE 8, MOTION 6, DENSITY 2
    ===================================================================== */
 
+/* ---------- Page shell ---------- */
 .page {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  transition: background-color 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.pageDefault { background-color: #0d1520; }
+.pageHim { background-color: #0a1220; }
+.pageHer { background-color: #f4ede2; }
+
+/* Grain overlay — taste-skill: fixed, pointer-events-none pseudo */
+.page::after {
+  content: "";
   position: fixed;
   inset: 0;
-  overflow: hidden;
-  background: #0d1520;
-  display: flex;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  mix-blend-mode: overlay;
 }
 
-/* ---------- Half panels ---------- */
-.half {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  cursor: pointer;
-  user-select: none;
-  min-height: 100dvh;
-}
-
-/* Active press — tactile scale per Emil */
-.half:active {
-  transform: scale(0.98);
-}
-
-.halfNavy {
-  background: #0d1520;
-}
-
-.halfCream {
-  background: #f4ede2;
-}
-
-/* ---------- Inner (parallax target) ---------- */
-.inner {
+/* ---------- Content stack ---------- */
+.content {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  text-align: center;
   position: relative;
   z-index: 2;
-  will-change: transform;
-  gap: 0;
+  padding: 0 24px;
 }
 
-/* ---------- Logo mark ---------- */
+/* ---------- Logo ---------- */
 .logo {
-  width: 72px;
+  width: clamp(80px, 12vw, 120px);
   height: auto;
-  margin-bottom: 28px;
-  opacity: 0.6;
-  filter: drop-shadow(0 1px 8px rgba(0, 0, 0, 0.15));
+  margin-bottom: 40px;
+  filter: drop-shadow(0 2px 16px rgba(0, 0, 0, 0.2));
 }
 
-/* ---------- FOR HIM / FOR HER label ---------- */
-.label {
+/* ---------- Wordmark ELEVATE ---------- */
+.wordmark {
   font-family: var(--cinzel);
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 6px;
+  font-size: clamp(48px, 8vw, 96px);
+  font-weight: 400;
+  letter-spacing: clamp(8px, 1.5vw, 18px);
+  line-height: 1;
+  margin-bottom: 12px;
+  transition: color 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.wordmarkDefault { color: #f4ede2; }
+.wordmarkHer { color: #0d1520; }
+
+/* ---------- Tagline ---------- */
+.tagline {
+  font-family: var(--cinzel);
+  font-size: clamp(9px, 1.2vw, 12px);
+  font-weight: 400;
+  letter-spacing: clamp(3px, 0.6vw, 6px);
   text-transform: uppercase;
-  margin-bottom: 6px;
+  margin-bottom: clamp(48px, 8vh, 80px);
+  transition: color 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.taglineDefault { color: rgba(201, 169, 97, 0.4); }
+.taglineHer { color: rgba(13, 21, 32, 0.35); }
+
+/* ---------- Paths container ---------- */
+.paths {
   display: flex;
+  align-items: center;
+  gap: clamp(32px, 6vw, 80px);
+}
+
+/* ---------- Divider dot ---------- */
+.dot {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  transition: background-color 0.5s ease;
+}
+
+.dotDefault { background-color: rgba(201, 169, 97, 0.3); }
+.dotHer { background-color: rgba(13, 21, 32, 0.2); }
+
+/* ---------- Path button ---------- */
+.path {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 20px 32px;
+  position: relative;
+  outline: none;
+}
+
+/* Subtle underline indicator */
+.path::after {
+  content: "";
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  width: 0;
+  height: 1px;
+  transform: translateX(-50%);
+  transition: width 0.4s cubic-bezier(0.23, 1, 0.32, 1), background-color 0.5s ease;
+}
+
+.pathDefault::after { background-color: #c9a961; }
+.pathHer::after { background-color: #0d1520; }
+
+.path:hover::after,
+.path:focus-visible::after {
+  width: 40px;
+}
+
+/* Focus ring — taste-skill: accessible focus */
+.path:focus-visible {
+  outline: 1px solid #c9a961;
+  outline-offset: 8px;
+}
+
+/* Active press — Emil: scale 0.97 on active */
+.path:active {
+  transform: scale(0.97);
+}
+
+/* ---------- Path label ---------- */
+.pathLabel {
+  font-family: var(--sans);
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  transition: color 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.pathLabelDefault { color: rgba(244, 237, 226, 0.35); }
+.pathLabelHimHover { color: #c9a961; }
+.pathLabelHer { color: rgba(13, 21, 32, 0.35); }
+.pathLabelHerHover { color: #0d1520; }
+
+/* ---------- Path title ---------- */
+.pathTitle {
+  font-family: var(--cinzel);
+  font-size: clamp(36px, 5vw, 56px);
+  font-weight: 400;
+  letter-spacing: 4px;
+  line-height: 1;
+  transition: color 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.pathTitleDefault { color: #f4ede2; }
+.pathTitleHimHover { color: #f4ede2; }
+.pathTitleHer { color: #0d1520; }
+
+/* ---------- Path subtitle (hover reveal) ---------- */
+.pathSub {
+  font-family: var(--sans);
+  font-size: 12px;
+  letter-spacing: 0.3px;
+  line-height: 1.5;
+  max-width: 200px;
+  text-align: center;
   overflow: hidden;
 }
 
-.labelNavy { color: rgba(244, 237, 226, 0.35); }
-.labelCream { color: rgba(13, 21, 32, 0.3); }
+.pathSubDefault { color: rgba(244, 237, 226, 0.35); }
+.pathSubHer { color: rgba(13, 21, 32, 0.4); }
 
-/* ---------- TRT / HRT display ---------- */
-.display {
-  font-family: var(--cinzel);
-  font-weight: 400;
-  letter-spacing: 3px;
-  line-height: 0.85;
-  margin-bottom: 0;
-}
-
-.displayNavy { color: #f4ede2; }
-.displayCream { color: #0d1520; }
-
-/* ---------- Tagline (hover reveal) ---------- */
-.tagline {
-  font-family: var(--sans);
-  font-size: 13px;
-  letter-spacing: 0.3px;
-  line-height: 1.55;
-  max-width: 220px;
-  text-align: center;
-  margin-top: 20px;
-}
-
-.taglineNavy { color: rgba(244, 237, 226, 0.4); }
-.taglineCream { color: rgba(13, 21, 32, 0.4); }
-
-/* ---------- Enter ---------- */
-.enter {
-  font-family: var(--cinzel);
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 4px;
-  text-transform: uppercase;
-  margin-top: 20px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.enterNavy { color: #c9a961; }
-.enterCream { color: #0d1520; }
-
-/* Arrow nudge on parent hover */
-.arrow {
-  display: inline-block;
-  transition: transform 200ms cubic-bezier(0.23, 1, 0.32, 1);
-}
-
-/* ---------- Centre seam ---------- */
-.seam {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 1px;
-  z-index: 5;
-  pointer-events: none;
-  background: rgba(201, 169, 97, 0.1);
-}
-
-/* ---------- ELEVATE wordmark (top centre) ---------- */
-.mark {
-  position: fixed;
-  top: 22px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 30;
-  font-family: var(--cinzel);
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 7px;
-  color: rgba(244, 237, 226, 0.3);
-  pointer-events: none;
-  white-space: nowrap;
-}
-
-/* ---------- Bottom pillars ---------- */
-.pillars {
-  position: fixed;
-  bottom: 22px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 30;
-  font-family: var(--cinzel);
-  font-size: 9px;
-  font-weight: 400;
-  letter-spacing: 5px;
-  text-transform: uppercase;
-  color: rgba(201, 169, 97, 0.18);
-  pointer-events: none;
-  white-space: nowrap;
-}
-
-/* ---------- Admin (bottom right, near-invisible) ---------- */
+/* ---------- Admin ---------- */
 .admin {
   position: fixed;
-  top: 22px;
+  top: 20px;
   right: 24px;
   z-index: 30;
   font-family: var(--sans);
   font-size: 10px;
   letter-spacing: 1.5px;
   text-transform: uppercase;
-  color: rgba(244, 237, 226, 0.12);
   text-decoration: none;
-  transition: color 200ms ease;
+  transition: color 0.5s ease;
 }
 
-.admin:hover { color: rgba(244, 237, 226, 0.35); }
+.adminDefault { color: rgba(244, 237, 226, 0.1); }
+.adminDefault:hover { color: rgba(244, 237, 226, 0.3); }
+.adminHer { color: rgba(13, 21, 32, 0.15); }
+.adminHer:hover { color: rgba(13, 21, 32, 0.4); }
 
-/* ---------- Transition wipe ---------- */
+/* ---------- Bottom credit ---------- */
+.credit {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 30;
+  font-family: var(--sans);
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  pointer-events: none;
+  white-space: nowrap;
+  transition: color 0.5s ease;
+}
+
+.creditDefault { color: rgba(244, 237, 226, 0.08); }
+.creditHer { color: rgba(13, 21, 32, 0.1); }
+
+/* ---------- Wipe ---------- */
 .wipe {
   position: fixed;
   inset: 0;
@@ -192,45 +233,33 @@
 
 /* ---------- Mobile ---------- */
 @media (max-width: 768px) {
-  .page {
+  .paths {
     flex-direction: column;
+    gap: 20px;
   }
 
-  .half {
-    min-height: 50dvh;
-  }
+  .dot { display: none; }
 
-  .display {
-    letter-spacing: 2px;
-  }
-
-  .logo {
-    width: 48px;
-    margin-bottom: 16px;
-  }
-
-  .tagline {
-    font-size: 12px;
-    max-width: 200px;
-  }
-
-  .seam { display: none; }
-  .pillars { display: none; }
-
-  .mark {
-    font-size: 10px;
-    letter-spacing: 5px;
+  .path {
+    padding: 16px 24px;
   }
 }
 
-/* ---------- Touch device hover guard (Emil) ---------- */
+/* ---------- Touch hover guard (Emil) ---------- */
 @media (hover: hover) and (pointer: fine) {
-  .arrow:hover {
-    transform: translateX(3px);
+  .path:hover {
+    transform: translateY(-2px);
+    transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  .path:hover:active {
+    transform: scale(0.97) translateY(0);
   }
 }
 
 /* ---------- Reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {
-  .half:active { transform: none; }
+  .page { transition: none; }
+  .wordmark, .tagline, .pathLabel, .pathTitle, .path::after { transition: none; }
+  .path:active { transform: none; }
 }
