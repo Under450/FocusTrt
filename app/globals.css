@@ -1,10 +1,12 @@
+@import "tailwindcss";
+
 /* =====================================================================
    FOCUSTRT GLOBAL STYLES
    Palette + typography lifted directly from existing index.html
    to keep visual language consistent across the whole app
    ===================================================================== */
 
-@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:wght@400;500;600;700&family=Didact+Gothic&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:wght@400;500;600;700&family=Didact+Gothic&family=Outfit:wght@300;400;500;600&display=swap");
 
 :root {
   /* Core palette */
