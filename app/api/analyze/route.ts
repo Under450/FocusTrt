@@ -2,11 +2,7 @@ import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
   try {
-    const { base64, mediaType } = await request.json();
-
-    if (!base64 || !mediaType) {
-      return NextResponse.json({ error: "Missing file data" }, { status: 400 });
-    }
+    const body = await request.json();
 
     if (!process.env.ANTHROPIC_API_KEY) {
       return NextResponse.json({ error: "API key not configured" }, { status: 500 });
@@ -15,9 +11,37 @@ export async function POST(request: Request) {
     const Anthropic = (await import("@anthropic-ai/sdk")).default;
     const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
-    const prompt = `You are a clinical data extraction system for a UK hormone optimisation clinic called REVIVE.
+    // ── INSIGHT MODE — interpret a single marker ──
+    if (body.insight) {
+      const { markerName, markerValue, markerUnit, markerStatus, refLow, refHigh } = body;
+      const message = await client.messages.create({
+        model: "claude-sonnet-4-5-20250929",
+        max_tokens: 600,
+        messages: [{
+          role: "user",
+          content: `You are a UK hormone clinic clinician at REVIVE. A patient on TRT/HRT has a ${markerName} result of ${markerValue} ${markerUnit} (status: ${markerStatus}, UK ref: ${refLow ?? "?"}–${refHigh ?? "?"}).
 
-Extract ALL biomarker values from this blood test report. Return ONLY a JSON object with this exact structure — no other text, no markdown:
+Write three short paragraphs:
+1) What this result means clinically (2-3 sentences).
+2) What the UK reference range means and how this result compares.
+3) Specific implications for someone on TRT or HRT.
+
+Be direct and accessible. No bullet points. No headers.`
+        }]
+      });
+      const text = message.content[0].type === "text" ? message.content[0].text : "";
+      return NextResponse.json({ text });
+    }
+
+    // ── EXTRACTION MODE — parse blood test PDF/image ──
+    const { base64, mediaType } = body;
+    if (!base64 || !mediaType) {
+      return NextResponse.json({ error: "Missing file data" }, { status: 400 });
+    }
+
+    const prompt = `You are a clinical data extraction system for REVIVE, a UK hormone optimisation clinic.
+
+Extract ALL biomarker values from this blood test report. Return ONLY a JSON object — no markdown, no preamble:
 
 {
   "patient_name": "string or null",
@@ -40,7 +64,7 @@ Extract ALL biomarker values from this blood test report. Return ONLY a JSON obj
   ]
 }
 
-Group markers logically by clinical category. Include every value visible in the report. Use the reference ranges provided in the report to determine status. Use UK clinical reference ranges where none are provided.`;
+Group markers logically by clinical category. Include every value visible. Use report reference ranges to determine status. Apply UK clinical ranges where none are provided.`;
 
     const contentBlock: any = mediaType === "application/pdf"
       ? { type: "document", source: { type: "base64", media_type: mediaType, data: base64 } }
