@@ -43,6 +43,53 @@ Be direct and accessible. No bullet points. No headers.`
       return NextResponse.json({ text }, { headers: corsHeaders });
     }
 
+    // ── PODCAST MODE — generate script from study ──
+    if (body.podcast) {
+      const { title, studyText, category, audience, length, citation, doi } = body;
+      const lengthMap: Record<string, string> = { short: "5–8 minutes", medium: "10–15 minutes", long: "20–25 minutes" };
+      const audienceMap: Record<string, string> = {
+        patient: "patients (use accessible, encouraging language — no heavy jargon)",
+        clinician: "clinicians (technical, precise, cite values and statistics)",
+        both: "a mixed audience of patients and clinicians",
+      };
+      const prompt = `You are a medical podcast scriptwriter for REVIVE, a premium UK hormone optimisation clinic (TRT and HRT).
+
+Convert this clinical study into an engaging podcast episode titled: "${title}"
+
+Target audience: ${audienceMap[audience] || audience}
+Episode length: ${lengthMap[length] || length}
+Category: ${category}
+${citation ? "Citation: " + citation : ""}
+${doi ? "Source: " + doi : ""}
+
+STUDY TEXT:
+${studyText}
+
+Write a complete, spoken-word podcast script with:
+
+**OPENING** — Warm, professional welcome. Introduce the episode and exactly what listeners will learn.
+
+**BACKGROUND** — Why this topic matters for hormone health and for the listener specifically.
+
+**THE STUDY** — Walk through the key findings clearly. Use real numbers from the study. Explain what the researchers found and how robust the evidence is.
+
+**WHAT THIS MEANS FOR YOU** — Translate findings into practical meaning for someone on TRT or HRT. What should they watch for, ask their clinician about, or be encouraged by?
+
+**CLINICAL TAKEAWAYS** — 3–5 concrete, actionable points a patient or clinician can take away.
+
+**CLOSING** — Warm summary and call to action (track symptoms, discuss with clinician at next appointment, log results in the REVIVE dashboard).
+
+Write as natural spoken word — authoritative, warm, and engaging. No music cues or production notes. Use clear section headers.`;
+
+      const message = await client.messages.create({
+        model: "claude-sonnet-4-5-20250929",
+        max_tokens: 4000,
+        messages: [{ role: "user", content: prompt }],
+      });
+      const script = message.content[0].type === "text" ? message.content[0].text : "";
+      return NextResponse.json({ script }, { headers: corsHeaders });
+    }
+
     // ── EXTRACTION MODE — parse blood test PDF/image ──
     const { base64, mediaType } = body;
     if (!base64 || !mediaType) {
