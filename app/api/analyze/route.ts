@@ -1,11 +1,21 @@
 import { NextResponse } from "next/server";
 
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "https://under450.github.io",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type",
+};
+
+export async function OPTIONS() {
+  return new NextResponse(null, { status: 204, headers: corsHeaders });
+}
+
 export async function POST(request: Request) {
   try {
     const body = await request.json();
 
     if (!process.env.ANTHROPIC_API_KEY) {
-      return NextResponse.json({ error: "API key not configured" }, { status: 500 });
+      return NextResponse.json({ error: "API key not configured" }, { status: 500, headers: corsHeaders });
     }
 
     const Anthropic = (await import("@anthropic-ai/sdk")).default;
@@ -30,13 +40,13 @@ Be direct and accessible. No bullet points. No headers.`
         }]
       });
       const text = message.content[0].type === "text" ? message.content[0].text : "";
-      return NextResponse.json({ text });
+      return NextResponse.json({ text }, { headers: corsHeaders });
     }
 
     // ── EXTRACTION MODE — parse blood test PDF/image ──
     const { base64, mediaType } = body;
     if (!base64 || !mediaType) {
-      return NextResponse.json({ error: "Missing file data" }, { status: 400 });
+      return NextResponse.json({ error: "Missing file data" }, { status: 400, headers: corsHeaders });
     }
 
     const prompt = `You are a clinical data extraction system for REVIVE, a UK hormone optimisation clinic.
@@ -83,9 +93,9 @@ Group markers logically by clinical category. Include every value visible. Use r
     const cleaned = rawText.replace(/```json\n?/g, "").replace(/\n?```/g, "").trim();
     const data = JSON.parse(cleaned);
 
-    return NextResponse.json(data);
+    return NextResponse.json(data, { headers: corsHeaders });
   } catch (err: any) {
     console.error("[analyze] Error:", err);
-    return NextResponse.json({ error: err.message || "Extraction failed" }, { status: 500 });
+    return NextResponse.json({ error: err.message || "Extraction failed" }, { status: 500, headers: corsHeaders });
   }
 }
