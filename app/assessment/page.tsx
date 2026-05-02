@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
+import { useRouter } from "next/navigation";
 import {
   CARDS, type Answers,
   ADAM_QUESTIONS, IIEF5_QUESTIONS,
@@ -26,6 +27,8 @@ const SEGS = {
 } as const;
 
 export default function AssessmentPage() {
+  const router = useRouter();
+  const cardRef = useRef<HTMLDivElement>(null);
   const [cardIdx, setCardIdx] = useState(0);
   const [answers, setAnswers] = useState<Answers>({});
   const [phase, setPhase] = useState<Phase>("quiz");
@@ -42,6 +45,12 @@ export default function AssessmentPage() {
   const card = phase === "quiz" ? activeCards[cardIdx] : null;
   const totalCards = activeCards.length;
   const progress = phase === "quiz" ? ((cardIdx + 1) / totalCards) * 100 : 100;
+
+  // Scroll to top of card on every slide/phase change
+  useEffect(() => {
+    cardRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [cardIdx, phase]);
 
   useEffect(() => {
     const stored = localStorage.getItem("elevate_session_id");
@@ -82,67 +91,50 @@ export default function AssessmentPage() {
   function getOptions(): string[] {
     if (!card?.options) return [];
     if (Array.isArray(card.options)) return card.options;
-    return t ? card.options.trt : card.options.hrt;
+    return card.options[theme] ?? [];
   }
 
+  const medOptions = sex === "I'm a woman"
+    ? MEDICATION_OPTIONS_WOMEN
+    : MEDICATION_OPTIONS_COMMON;
+
   function isValid(): boolean {
-    if (!card) return true;
-    const ct = card.type;
-    if (ct === "welcome" || ct === "loading") return true;
-    if (ct === "combined") return true;
-    if (ct === "segmented") return true;
-    if (ct === "medications") return true; // optional text, multi has "none"
-    if (ct === "single") return !!answers[card.id];
-    if (ct === "multi") { const v = answers[card.id]; return Array.isArray(v) && v.length > 0; }
-    if (ct === "adam") { const r = answers.adam_responses as number[] | undefined; return !!r && r.length === 10 && r.every((v) => v === 0 || v === 1); }
-    if (ct === "iief5") { const r = answers.iief5_responses as number[] | undefined; return !!r && r.length === 5 && r.every((v) => v >= 1 && v <= 5); }
-    if (ct === "phq9") { const r = answers.phq9_responses as number[] | undefined; return !!r && r.length === 9 && r.every((v) => v >= 0 && v <= 3); }
-    if (ct === "greene") { const r = answers.greene_responses as number[] | undefined; return !!r && r.length === 21 && r.every((v) => v >= 0 && v <= 3); }
+    if (!card) return false;
+    if (card.type === "welcome") return true;
+    if (card.type === "loading") return false;
+    if (card.type === "single") return !!answers[card.id];
+    if (card.type === "multi") return ((answers[card.id] as string[]) || []).length > 0;
+    if (card.type === "medications") return true;
+    if (card.type === "combined") return true;
+    if (card.type === "segmented") return true;
+    if (card.type === "adam") return ((answers.adam_responses as number[]) || []).every((v) => v !== -1);
+    if (card.type === "iief5") return ((answers.iief5_responses as number[]) || []).every((v) => v !== -1);
+    if (card.type === "phq9") return ((answers.phq9_responses as number[]) || []).every((v) => v !== -1);
+    if (card.type === "greene") return ((answers.greene_responses as number[]) || []).every((v) => v !== -1);
     return true;
   }
 
   function computeScores() {
-    // ADAM
-    const adamR = answers.adam_responses as number[] | undefined;
-    if (adamR && adamR.length === 10) {
-      const score = adamR.reduce((a, b) => a + b, 0);
-      const positive = score >= 3 && (adamR[0] === 1 || adamR[6] === 1);
+    const adamR = (answers.adam_responses as number[]) || [];
+    if (adamR.length) {
+      const score = adamR.filter(Boolean).length;
       setAnswer("adam_score", score);
-      setAnswer("adam_positive", positive);
     }
-    // IIEF-5
-    const iiefR = answers.iief5_responses as number[] | undefined;
-    if (iiefR && iiefR.length === 5) {
-      const score = iiefR.reduce((a, b) => a + b, 0);
-      let severity = "No ED";
-      if (score <= 7) severity = "Severe";
-      else if (score <= 11) severity = "Moderate";
-      else if (score <= 16) severity = "Mild-moderate";
-      else if (score <= 21) severity = "Mild";
-      setAnswer("iief5_score", score);
-      setAnswer("iief5_severity", severity);
+    const iief5R = (answers.iief5_responses as number[]) || [];
+    if (iief5R.length) {
+      setAnswer("iief5_score", iief5R.reduce((a, b) => a + b, 0));
     }
-    // PHQ-9
-    const phqR = answers.phq9_responses as number[] | undefined;
-    if (phqR && phqR.length === 9) {
-      const score = phqR.reduce((a, b) => a + b, 0);
-      let severity = "Minimal";
-      if (score >= 20) severity = "Severe";
-      else if (score >= 15) severity = "Moderately severe";
-      else if (score >= 10) severity = "Moderate";
-      else if (score >= 5) severity = "Mild";
-      setAnswer("phq9_score", score);
-      setAnswer("phq9_severity", severity);
-      setAnswer("phq9_safety_concern", (phqR[8] ?? 0) > 0);
+    const phq9R = (answers.phq9_responses as number[]) || [];
+    if (phq9R.length) {
+      setAnswer("phq9_score", phq9R.reduce((a, b) => a + b, 0));
     }
-    // Greene
-    const gR = answers.greene_responses as number[] | undefined;
-    if (gR && gR.length === 21) {
-      setAnswer("greene", {
-        psychological: gR.slice(0, 11).reduce((a, b) => a + b, 0),
-        somatic: gR.slice(11, 18).reduce((a, b) => a + b, 0),
-        vasomotor: gR.slice(18, 20).reduce((a, b) => a + b, 0),
-        sexual: gR[20],
+    const gR = (answers.greene_responses as number[]) || [];
+    if (gR.length) {
+      setAnswer("greene_score", {
+        psychological: gR.slice(0, 6).reduce((a, b) => a + b, 0),
+        somatic: gR.slice(6, 11).reduce((a, b) => a + b, 0),
+        vasomotor: gR.slice(11, 13).reduce((a, b) => a + b, 0),
+        sexual: gR.slice(13, 14).reduce((a, b) => a + b, 0),
         total: gR.reduce((a, b) => a + b, 0),
       });
     }
@@ -151,7 +143,6 @@ export default function AssessmentPage() {
   function next() {
     if (!card) return;
     if (card.type === "loading") return;
-    // Compute scores before advancing from questionnaire cards
     if (["adam", "iief5", "phq9", "greene"].includes(card.type)) computeScores();
     if (cardIdx < totalCards - 1) setCardIdx(cardIdx + 1);
   }
@@ -168,6 +159,23 @@ export default function AssessmentPage() {
     if (phase === "transition") setPhase("findings");
     else if (phase === "findings") setPhase("tests");
     else if (phase === "tests") setPhase("decision");
+  }
+
+  // Save completed assessment and go to dashboard
+  function completeAssessment() {
+    const completedAt = new Date().toISOString();
+    const firstName = (answers.name as string || "").split(" ")[0] || "there";
+    const assessmentData = {
+      answers,
+      findings,
+      tests,
+      completedAt,
+      firstName,
+      theme,
+    };
+    localStorage.setItem("focus_assessment", JSON.stringify(assessmentData));
+    localStorage.setItem("focus_patient_name", answers.name as string || "");
+    router.push("/dashboard");
   }
 
   // Auto-advance on loading card
@@ -200,7 +208,6 @@ export default function AssessmentPage() {
 
   const today = new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
 
-  // Helpers for array-based questionnaire answers
   function setArrayAnswer(key: string, idx: number, val: number, len: number) {
     const arr = [...((answers[key] as number[]) || new Array(len).fill(-1))];
     arr[idx] = val;
@@ -208,54 +215,65 @@ export default function AssessmentPage() {
   }
 
   const tickSvg = (selected: boolean) => (
-    <svg className={cls(s.tick, selected && s.tickVisible)} viewBox="0 0 20 20" fill="none">
-      <path d="M4 10.5L8 14.5L16 6.5" stroke={t ? "#c9a961" : "#1c2c47"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
+    selected ? (
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ marginLeft: "auto", flexShrink: 0 }}>
+        <circle cx="8" cy="8" r="7.5" stroke="currentColor" strokeOpacity="0.3" />
+        <path d="M4.5 8l2.5 2.5 4.5-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    ) : (
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ marginLeft: "auto", flexShrink: 0 }}>
+        <circle cx="8" cy="8" r="7.5" stroke="currentColor" strokeOpacity="0.2" />
+      </svg>
+    )
   );
-
-  // Medication options based on sex
-  const medOptions = t ? MEDICATION_OPTIONS_COMMON : [...MEDICATION_OPTIONS_COMMON.slice(0, -1), ...MEDICATION_OPTIONS_WOMEN, MEDICATION_OPTIONS_COMMON[MEDICATION_OPTIONS_COMMON.length - 1]];
 
   return (
     <div className={cls(s.shell, t ? s.shellTrt : s.shellHrt)}>
-      <div className={cls(s.card, t ? s.cardTrt : s.cardHrt)}>
+      <div className={cls(s.card, t ? s.cardTrt : s.cardHrt)} ref={cardRef}>
         <div className={cls(s.stripe, t ? s.stripeTrt : s.stripeHrt)} />
         <div className={s.cardInner}>
 
-          {/* Progress */}
-          {phase === "quiz" && card?.type !== "welcome" && (
-            <div className={s.progressWrap}>
-              <div className={cls(s.progressBar, t ? s.progressBarTrt : s.progressBarHrt)} role="progressbar" aria-valuenow={Math.round(progress)} aria-valuemin={0} aria-valuemax={100}>
-                <div className={cls(s.progressFill, t ? s.progressFillTrt : s.progressFillHrt)} style={{ width: `${progress}%` }} />
-              </div>
-              <span className={cls(s.stepCount, t ? s.stepCountTrt : s.stepCountHrt)}>{cardIdx + 1} / {totalCards}</span>
+          {/* Progress bar */}
+          <div className={s.progressWrap}>
+            <div className={cls(s.progressBar, t ? s.progressBarTrt : s.progressBarHrt)}>
+              <div className={cls(s.progressFill, t ? s.progressFillTrt : s.progressFillHrt)} style={{ width: `${progress}%` }} />
             </div>
-          )}
+            <span className={cls(s.stepCount, t ? s.stepCountTrt : s.stepCountHrt)}>
+              {phase === "quiz" ? `${cardIdx + 1} / ${totalCards}` : phase.toUpperCase()}
+            </span>
+          </div>
 
-          {phase !== "quiz" && (
-            <div className={s.progressWrap}>
-              <div className={cls(s.progressBar, t ? s.progressBarTrt : s.progressBarHrt)}>
-                <div className={cls(s.progressFill, t ? s.progressFillTrt : s.progressFillHrt)} style={{ width: "100%" }} />
-              </div>
-              <span className={cls(s.pill, t ? s.pillTrt : s.pillHrt)}>QUIZ COMPLETE</span>
-            </div>
-          )}
-
-          {/* ─── QUIZ PHASE ─── */}
+          {/* ─── QUIZ ─── */}
           {phase === "quiz" && card && (
             <>
               <p className={cls(s.eyebrow, t ? s.eyebrowTrt : s.eyebrowHrt)}>{card.eyebrow}</p>
               <h1 className={cls(s.title, t ? s.titleTrt : s.titleHrt)}>{card.title}</h1>
-              <p className={cls(s.body, t ? s.bodyTrt : s.bodyHrt)}>{card.body}</p>
+              {card.body && <p className={cls(s.body, t ? s.bodyTrt : s.bodyHrt)}>{card.body}</p>}
+
+              {/* Name input for welcome */}
+              {card.type === "welcome" && (
+                <div style={{ marginBottom: 24 }}>
+                  <div className={cls(s.inputLabel, t ? s.inputLabelTrt : s.inputLabelHrt)}>YOUR NAME</div>
+                  <input
+                    className={cls(s.inputField, t ? s.inputFieldTrt : s.inputFieldHrt)}
+                    type="text"
+                    placeholder="First name"
+                    value={(answers.name as string) || ""}
+                    onChange={(e) => setAnswer("name", e.target.value)}
+                  />
+                </div>
+              )}
 
               {/* Single select */}
               {card.type === "single" && (
                 <div className={s.options}>
                   {getOptions().map((opt) => {
                     const selected = answers[card.id] === opt;
-                    return (<button key={opt} className={cls(s.option, t ? s.optionTrt : s.optionHrt, selected && (t ? s.optionTrtSelected : s.optionHrtSelected))} onClick={() => setAnswer(card.id, opt)}>
-                      <span>{opt}</span>{tickSvg(selected)}
-                    </button>);
+                    return (
+                      <button key={opt} className={cls(s.option, t ? s.optionTrt : s.optionHrt, selected && (t ? s.optionTrtSelected : s.optionHrtSelected))} onClick={() => setAnswer(card.id, opt)}>
+                        <span>{opt}</span>{tickSvg(selected)}
+                      </button>
+                    );
                   })}
                 </div>
               )}
@@ -265,9 +283,11 @@ export default function AssessmentPage() {
                 <div className={s.options}>
                   {getOptions().map((opt) => {
                     const selected = ((answers[card.id] as string[]) || []).includes(opt);
-                    return (<button key={opt} className={cls(s.option, t ? s.optionTrt : s.optionHrt, selected && (t ? s.optionTrtSelected : s.optionHrtSelected))} onClick={() => toggleMulti(card.id, opt)}>
-                      <span>{opt}</span>{tickSvg(selected)}
-                    </button>);
+                    return (
+                      <button key={opt} className={cls(s.option, t ? s.optionTrt : s.optionHrt, selected && (t ? s.optionTrtSelected : s.optionHrtSelected))} onClick={() => toggleMulti(card.id, opt)}>
+                        <span>{opt}</span>{tickSvg(selected)}
+                      </button>
+                    );
                   })}
                 </div>
               )}
@@ -278,9 +298,11 @@ export default function AssessmentPage() {
                   <div className={s.options}>
                     {medOptions.map((opt) => {
                       const selected = ((answers.medications as string[]) || []).includes(opt);
-                      return (<button key={opt} className={cls(s.option, t ? s.optionTrt : s.optionHrt, selected && (t ? s.optionTrtSelected : s.optionHrtSelected))} onClick={() => toggleMulti("medications", opt)}>
-                        <span>{opt}</span>{tickSvg(selected)}
-                      </button>);
+                      return (
+                        <button key={opt} className={cls(s.option, t ? s.optionTrt : s.optionHrt, selected && (t ? s.optionTrtSelected : s.optionHrtSelected))} onClick={() => toggleMulti("medications", opt)}>
+                          <span>{opt}</span>{tickSvg(selected)}
+                        </button>
+                      );
                     })}
                   </div>
                   <div style={{ marginBottom: 24 }}>
@@ -315,7 +337,9 @@ export default function AssessmentPage() {
                     <div key={key} className={s.segGroup}>
                       <div className={cls(s.segLabel, t ? s.segLabelTrt : s.segLabelHrt)}>{seg.label}</div>
                       <div className={cls(s.segRow, t ? s.segRowTrt : s.segRowHrt)}>
-                        {seg.opts.map((opt) => (<button key={opt} className={cls(s.segBtn, t ? s.segBtnTrt : s.segBtnHrt, answers[key] === opt && (t ? s.segBtnTrtActive : s.segBtnHrtActive))} onClick={() => setAnswer(key, opt)}>{opt}</button>))}
+                        {seg.opts.map((opt) => (
+                          <button key={opt} className={cls(s.segBtn, t ? s.segBtnTrt : s.segBtnHrt, answers[key] === opt && (t ? s.segBtnTrtActive : s.segBtnHrtActive))} onClick={() => setAnswer(key, opt)}>{opt}</button>
+                        ))}
                       </div>
                     </div>
                   ))}
@@ -394,7 +418,6 @@ export default function AssessmentPage() {
                       </div>
                     );
                   })}
-                  {/* PHQ-9 Q9 safety notice */}
                   {phq9Notice && (
                     <div style={{ padding: 16, borderRadius: 8, marginTop: 12, border: `1px solid ${t ? "#c9a961" : "#1c2c47"}`, background: t ? "rgba(244,237,226,0.08)" : "rgba(28,44,71,0.08)" }}>
                       <p className={cls(s.body, t ? s.bodyTrt : s.bodyHrt)} style={{ marginBottom: 0, fontSize: 13, lineHeight: 1.6, opacity: 1 }}>
@@ -458,8 +481,8 @@ export default function AssessmentPage() {
               <p className={cls(s.body, t ? s.bodyTrt : s.bodyHrt)}>We&apos;ve analysed your responses against our clinical recommendation framework. Before you see your full report, here&apos;s the honest path forward.</p>
               {[
                 { n: "01", title: "See your personalised findings", desc: "A preview of what your symptoms, history and goals tell us — specific to you." },
-                { n: "02", title: "Create your free account", desc: "Unlocks your complete clinical breakdown, recommended tests, and a downloadable PDF you can keep or share with your GP.", highlight: true },
-                { n: "03", title: "Choose your path forward", desc: "Book a test, speak to a consultation specialist, or save your report for later. Your account, your pace." },
+                { n: "02", title: "Review your recommended tests", desc: "Unlocks your complete clinical breakdown, recommended tests, and a downloadable PDF you can keep or share with your GP.", highlight: true },
+                { n: "03", title: "Choose your path forward", desc: "Select a Vitality package, book a test, or speak to a consultation specialist. Your account, your pace." },
               ].map((st) => (
                 <div key={st.n} className={cls(s.step, t ? s.stepTrt : s.stepHrt, st.highlight && (t ? s.stepHighlightTrt : s.stepHighlightHrt))}>
                   <span className={cls(s.stepNum, t ? s.stepNumTrt : s.stepNumHrt)}>{st.n}</span>
@@ -505,12 +528,12 @@ export default function AssessmentPage() {
                 <div key={i} style={{ position: "relative", marginBottom: 12 }}>
                   <div className={cls(s.testCard, t ? s.testCardTrt : s.testCardHrt, test.locked && s.locked)}>
                     <div className={cls(s.testName, t ? s.testNameTrt : s.testNameHrt)}>{test.name}</div>
-                    <div className={cls(s.testMeasures, t ? s.testMeasuresTrt : s.testMeasuresHrt)}>{test.measures}</div>
+                    <div className={cls(s.testMeasures, t ? s.testMeasuresTrt : s.testMeasuresTrt)}>{test.measures}</div>
                     <div className={s.priceRow}>
                       <div className={s.priceCol}><div className={cls(s.priceLabel, t ? s.priceLabelTrt : s.priceLabelHrt)}>AT HOME</div><div className={cls(s.priceVal, t ? s.priceValTrt : s.priceValHrt)}>{test.homePrice}</div></div>
                       <div className={s.priceCol}><div className={cls(s.priceLabel, t ? s.priceLabelTrt : s.priceLabelHrt)}>IN CLINIC</div><div className={cls(s.priceVal, t ? s.priceValTrt : s.priceValHrt)}>{test.clinicPrice}</div></div>
                     </div>
-                    {!test.locked && <button className={cls(s.btnPrimary, t ? s.btnPrimaryTrt : s.btnPrimaryHrt)} style={{ width: "100%" }} onClick={() => alert("Account creation coming in next stage")}>BOOK THIS TEST →</button>}
+                    {!test.locked && <button className={cls(s.btnPrimary, t ? s.btnPrimaryTrt : s.btnPrimaryHrt)} style={{ width: "100%" }} onClick={completeAssessment}>BOOK THIS TEST →</button>}
                   </div>
                   {test.locked && <div className={s.lockOverlay}><span className={cls(s.lockPill, t ? s.lockPillTrt : s.lockPillHrt)}>UNLOCK · CREATE ACCOUNT</span></div>}
                 </div>
@@ -529,20 +552,20 @@ export default function AssessmentPage() {
               <h1 className={cls(s.title, t ? s.titleTrt : s.titleHrt)}>Three ways forward.</h1>
               <p className={cls(s.body, t ? s.bodyTrt : s.bodyHrt)}>There&apos;s no pressure to do everything at once. Pick what feels right today.</p>
               <div className={s.ctaStack}>
-                <button className={cls(s.ctaCard, s.ctaPrimary, t ? s.ctaTrt : s.ctaHrt)} onClick={() => alert("Account creation coming in next stage")}>
+                <button className={cls(s.ctaCard, s.ctaPrimary, t ? s.ctaTrt : s.ctaHrt)} onClick={completeAssessment}>
                   <div className={cls(s.ctaEyebrow, t ? s.ctaEyebrowTrt : s.ctaEyebrowHrt)}>RECOMMENDED · {tests[0]?.homePrice ?? "£49.99"}</div>
                   <div className={cls(s.ctaTitle, t ? s.ctaTitleTrt : s.ctaTitleHrt)}>Book your {t ? "testosterone" : "hormone"} test</div>
                   <div className={cls(s.ctaSub, t ? s.ctaSubTrt : s.ctaSubHrt)}>Get a definitive answer in 5 days</div>
                 </button>
-                <button className={cls(s.ctaCard, s.ctaOutlined, t ? s.ctaTrt : s.ctaHrt)} onClick={() => alert("Account creation coming in next stage")}>
+                <button className={cls(s.ctaCard, s.ctaOutlined, t ? s.ctaTrt : s.ctaHrt)} onClick={completeAssessment}>
                   <div className={cls(s.ctaEyebrow, t ? s.ctaEyebrowTrt : s.ctaEyebrowHrt)}>FREE</div>
                   <div className={cls(s.ctaTitle, t ? s.ctaTitleTrt : s.ctaTitleHrt)}>Speak to a consultation specialist</div>
                   <div className={cls(s.ctaSub, t ? s.ctaSubTrt : s.ctaSubHrt)}>15 mins, no commitment, no payment details</div>
                 </button>
-                <button className={cls(s.ctaCard, s.ctaOutlined, t ? s.ctaTrt : s.ctaHrt)} onClick={() => alert("Account creation coming in next stage")}>
+                <button className={cls(s.ctaCard, s.ctaOutlined, t ? s.ctaTrt : s.ctaHrt)} onClick={completeAssessment}>
                   <div className={cls(s.ctaEyebrow, t ? s.ctaEyebrowTrt : s.ctaEyebrowHrt)}>SAVE FOR LATER</div>
-                  <div className={cls(s.ctaTitle, t ? s.ctaTitleTrt : s.ctaTitleHrt)}>Email me my full report</div>
-                  <div className={cls(s.ctaSub, t ? s.ctaSubTrt : s.ctaSubHrt)}>Create account · unlocks complete analysis</div>
+                  <div className={cls(s.ctaTitle, t ? s.ctaTitleTrt : s.ctaTitleHrt)}>Access your full report</div>
+                  <div className={cls(s.ctaSub, t ? s.ctaSubTrt : s.ctaSubHrt)}>Dashboard · results · treatment options</div>
                 </button>
               </div>
               <div className={s.btnRow}>
