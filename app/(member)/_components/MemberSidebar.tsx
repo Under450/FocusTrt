@@ -1,5 +1,7 @@
 "use client";
 
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import styles from "../dashboard/dashboard.module.css";
 
@@ -32,6 +34,28 @@ function Icon({ name }: { name: string }) {
 }
 
 export default function MemberSidebar({ active }: { active: ActivePage }) {
+  const router = useRouter();
+  const [patientName, setPatientName] = useState("");
+  const [patientEmail, setPatientEmail] = useState("");
+
+  useEffect(() => {
+    setPatientName(localStorage.getItem("focus_patient_name") || "");
+    setPatientEmail(localStorage.getItem("focus_patient_email") || "");
+  }, []);
+
+  function handleLogout() {
+    localStorage.removeItem("focus_assessment");
+    localStorage.removeItem("focus_patient_name");
+    localStorage.removeItem("focus_patient_email");
+    localStorage.removeItem("focus_package");
+    router.push("/login");
+  }
+
+  const displayName = patientName?.split(" ")[0] || "Patient";
+  const initials = patientName
+    ? patientName.split(" ").map((w) => w[0]).join("").toUpperCase().slice(0, 2)
+    : "P";
+
   const item = (label: string, icon: string, page: ActivePage, href: string) => (
     <Link
       href={href}
@@ -65,12 +89,19 @@ export default function MemberSidebar({ active }: { active: ActivePage }) {
         <button className={styles.sbTreat}><Icon name="heart" /> Sexual Health</button>
       </nav>
       <div className={styles.sbUser}>
-        <div className={styles.sbAvatar}>CJ</div>
-        <div>
-          <div className={styles.sbName}>Craig</div>
+        <div className={styles.sbAvatar}>{initials}</div>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div className={styles.sbName}>{displayName}</div>
           <div className={styles.sbTier}>PATIENT</div>
+          {patientEmail && (
+            <div className={styles.sbEmail}>{patientEmail}</div>
+          )}
         </div>
       </div>
+      <button className={styles.sbLogout} onClick={handleLogout}>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+        Log out
+      </button>
     </aside>
   );
 }
