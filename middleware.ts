@@ -11,8 +11,14 @@ import { NextResponse, type NextRequest } from "next/server";
  * ADMIN (signed-in + whitelist): /admin/*
  */
 
+const PUBLIC_MEMBER_PREFIXES = [
+  "/dashboard",
+  "/assessment-results",
+];
+
 const MEMBER_PREFIXES = [
   "/dashboard",
+  "/assessment-results",
   "/trt/dashboard",
   "/hrt/dashboard",
   "/inner-circle",
@@ -39,6 +45,12 @@ export async function middleware(request: NextRequest) {
 
   // Public routes — no auth needed
   if (!isAdmin && !isMember) {
+    return response;
+  }
+
+  // Dashboard and assessment-results are public (assessment-first flow, no login required)
+  const isPublicMember = PUBLIC_MEMBER_PREFIXES.some((p) => path === p || path.startsWith(p + "/"));
+  if (isPublicMember) {
     return response;
   }
 

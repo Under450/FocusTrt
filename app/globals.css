@@ -1,33 +1,33 @@
 @import "tailwindcss";
 
 /* =====================================================================
-   FOCUSTRT GLOBAL STYLES
-   Palette + typography lifted directly from existing index.html
-   to keep visual language consistent across the whole app
+   REVIVE GLOBAL STYLES
+   Palette + typography for Revive Hormone Optimisation
    ===================================================================== */
 
 @import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:wght@400;500;600;700&family=Didact+Gothic&family=Outfit:wght@300;400;500;600&display=swap");
 
 :root {
   /* Core palette */
-  --navy: #111d2b;
-  --sidebar: #0c1620;
-  --cream: #fbf3da;
-  --copper: #b87333;
+  --navy: #0f1923;
+  --sidebar: #0a1628;
+  --cream: #e8dcc8;
+  --copper: #c9873a;
   --tan: #bd9468;
+  --green: #3ecf8e;
 
   /* Surfaces */
-  --card: rgba(255, 255, 255, 0.04);
-  --card-hover: rgba(255, 255, 255, 0.06);
-  --border: rgba(189, 148, 104, 0.12);
-  --border-strong: rgba(189, 148, 104, 0.28);
+  --card: rgba(255, 255, 255, 0.03);
+  --card-hover: rgba(255, 255, 255, 0.05);
+  --border: rgba(201, 135, 58, 0.12);
+  --border-strong: rgba(201, 135, 58, 0.28);
 
   /* Text */
-  --muted: rgba(251, 243, 218, 0.5);
-  --dim: rgba(251, 243, 218, 0.3);
+  --muted: rgba(232, 220, 200, 0.45);
+  --dim: rgba(232, 220, 200, 0.25);
 
   /* Feedback */
-  --success: #7fa76b;
+  --success: #3ecf8e;
   --warning: #d9a548;
   --danger: #c85a4a;
 

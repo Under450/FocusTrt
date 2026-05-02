@@ -399,7 +399,56 @@ export default function ElevateLanding() {
       </section>
 
       {/* ══════════════════════════════════════════════════════════════
-          SECTION 6 — CTA
+          SECTION 6 — PACKAGES
+          ══════════════════════════════════════════════════════════════ */}
+      <section id="packages" className="px-8 md:px-16 py-24 md:py-32 border-t border-[#ede6d8]/[0.04]">
+        <div className="max-w-[1200px] mx-auto">
+          <R>
+            <span className="text-[10px] tracking-[0.3em] uppercase text-[#b8956a]/50 block mb-4">Vitality Packages</span>
+            <h2 className="font-[family-name:var(--cinzel)] text-[clamp(1.6rem,3.5vw,2.4rem)] font-normal leading-tight mb-4">
+              Choose your protocol<span className="text-[#b8956a]">.</span>
+            </h2>
+            <p className="text-sm text-[#ede6d8]/25 max-w-[440px] mb-12">
+              Three tiers. One clinical standard. Every package includes GMC-registered clinician oversight,
+              ongoing monitoring, and direct messaging with your care team.
+            </p>
+          </R>
+
+          <div className="grid md:grid-cols-3 gap-px bg-[#ede6d8]/[0.04]">
+            {[
+              { tag: "ENTRY", name: "Vitality Start", price: "129", desc: "Entry TRT protocol. Testosterone cypionate, quarterly bloods, clinician messaging, injection guidance.", key: "vitality_start" },
+              { tag: "RECOMMENDED", name: "Vitality Core", price: "199", desc: "Full management. Protocol design, bi-monthly bloods, AI-assisted dosing, estrogen management, unlimited messaging.", key: "vitality_core", highlight: true },
+              { tag: "COMPREHENSIVE", name: "Vitality Elite", price: "349", desc: "Comprehensive + concierge. Monthly bloods, peptide stacking, nutrition coaching, priority appointments, quarterly reviews.", key: "vitality_elite" },
+            ].map((pkg, i) => (
+              <R key={pkg.key} delay={i * 0.08}>
+                <div className={`bg-[#0c0f14] p-8 md:p-10 flex flex-col ${pkg.highlight ? "border border-[#b8956a]/30 relative" : ""}`}>
+                  {pkg.highlight && <span className="absolute -top-3 left-8 text-[9px] tracking-[0.2em] uppercase bg-[#b8956a] text-[#0c0f14] px-3 py-1 font-semibold">Recommended</span>}
+                  <span className="text-[9px] tracking-[0.25em] uppercase text-[#b8956a]/60 mb-3">{pkg.tag}</span>
+                  <h3 className="font-[family-name:var(--cinzel)] text-xl font-normal text-[#ede6d8]/80 mb-1">{pkg.name}</h3>
+                  <div className="font-[family-name:var(--cinzel)] text-2xl text-[#b8956a] mb-4">&pound;{pkg.price}<span className="text-sm text-[#ede6d8]/20">/mo</span></div>
+                  <p className="text-xs leading-relaxed text-[#ede6d8]/25 mb-8 flex-1">{pkg.desc}</p>
+                  <button
+                    onClick={() => {
+                      localStorage.setItem("focus_package", pkg.key);
+                      router.push("/dashboard");
+                    }}
+                    className={`text-[11px] tracking-[0.2em] uppercase px-8 py-3.5 transition-all duration-300 active:scale-[0.97] w-full ${
+                      pkg.highlight
+                        ? "bg-[#b8956a] text-[#0c0f14] hover:bg-[#c9a97a]"
+                        : "border border-[#ede6d8]/10 text-[#ede6d8]/40 hover:border-[#b8956a]/30 hover:text-[#ede6d8]/70"
+                    }`}
+                  >
+                    Select Package
+                  </button>
+                </div>
+              </R>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════════════════════════
+          SECTION 7 — CTA
           ══════════════════════════════════════════════════════════════ */}
       <section className="px-8 md:px-16 py-24 md:py-32 border-t border-[#ede6d8]/[0.04]">
         <div className="max-w-[600px] mx-auto text-center">
@@ -422,10 +471,10 @@ export default function ElevateLanding() {
                 Start Your Assessment
               </button>
               <a
-                href="#process"
+                href="#packages"
                 className="font-[family-name:var(--cinzel)] text-[11px] tracking-[0.2em] uppercase text-[#ede6d8]/30 border border-[#ede6d8]/10 px-10 py-4 hover:border-[#ede6d8]/25 hover:text-[#ede6d8]/60 transition-all duration-300"
               >
-                View How It Works
+                View Packages
               </a>
             </div>
           </R>

@@ -17,7 +17,7 @@ export default function BiomarkerRing({
 }: BiomarkerRingProps) {
   const radius = (size - 12) / 2;
   const circumference = 2 * Math.PI * radius;
-  const fill = Math.max(0, Math.min(1, (value - min) / (max - min)));
+  const fill = value === 0 ? 0 : Math.max(0, Math.min(1, (value - min) / (max - min)));
   const offset = circumference * (1 - fill);
   const center = size / 2;
   const filterId = `glow-${label.replace(/\s+/g, "")}`;
@@ -71,7 +71,7 @@ export default function BiomarkerRing({
           fontSize="28"
           fontWeight="600"
         >
-          {value}
+          {value === 0 ? "\u2014" : value}
         </text>
 
         {/* Unit */}

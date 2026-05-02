@@ -206,6 +206,12 @@ export default function AssessmentPage() {
     }
   }, [card, phase, answers]);
 
+  // Scroll to top on card/phase change
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    cardRef.current?.scrollIntoView({ block: "start" });
+  }, [cardIdx, phase]);
+
   const today = new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
 
   function setArrayAnswer(key: string, idx: number, val: number, len: number) {
@@ -229,7 +235,7 @@ export default function AssessmentPage() {
 
   return (
     <div className={cls(s.shell, t ? s.shellTrt : s.shellHrt)}>
-      <div className={cls(s.card, t ? s.cardTrt : s.cardHrt)} ref={cardRef}>
+      <div ref={cardRef} className={cls(s.card, t ? s.cardTrt : s.cardHrt)}>
         <div className={cls(s.stripe, t ? s.stripeTrt : s.stripeHrt)} />
         <div className={s.cardInner}>
 
@@ -533,7 +539,7 @@ export default function AssessmentPage() {
                       <div className={s.priceCol}><div className={cls(s.priceLabel, t ? s.priceLabelTrt : s.priceLabelHrt)}>AT HOME</div><div className={cls(s.priceVal, t ? s.priceValTrt : s.priceValHrt)}>{test.homePrice}</div></div>
                       <div className={s.priceCol}><div className={cls(s.priceLabel, t ? s.priceLabelTrt : s.priceLabelHrt)}>IN CLINIC</div><div className={cls(s.priceVal, t ? s.priceValTrt : s.priceValHrt)}>{test.clinicPrice}</div></div>
                     </div>
-                    {!test.locked && <button className={cls(s.btnPrimary, t ? s.btnPrimaryTrt : s.btnPrimaryHrt)} style={{ width: "100%" }} onClick={completeAssessment}>BOOK THIS TEST →</button>}
+                    {!test.locked && <button className={cls(s.btnPrimary, t ? s.btnPrimaryTrt : s.btnPrimaryHrt)} style={{ width: "100%" }} onClick={completeAssessment}>BOOK THIS TEST &rarr;</button>}
                   </div>
                   {test.locked && <div className={s.lockOverlay}><span className={cls(s.lockPill, t ? s.lockPillTrt : s.lockPillHrt)}>UNLOCK · CREATE ACCOUNT</span></div>}
                 </div>
